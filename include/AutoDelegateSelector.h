@@ -16,23 +16,20 @@
 class AutoDelegateSelector
 {
 public:
-    AutoDelegateSelector(tflite::ops::builtin::BuiltinOpResolver *resolver,
-                         std::unique_ptr<tflite::Interpreter> *interpreter,
-                         AccelerationPolicyManager *accelerationPolicyManager);
+    AutoDelegateSelector(tflite::ops::builtin::BuiltinOpResolver *resolver);
 
     virtual ~AutoDelegateSelector();
 
-    bool SelectDelegate();
-    bool Preview();
-    bool FillRandomInputTensor();
+    bool SelectDelegate(std::unique_ptr<tflite::Interpreter> *interpreter, AccelerationPolicyManager::Policy policy);
+    bool Preview(std::unique_ptr<tflite::Interpreter> *interpreter);
+    bool FillRandomInputTensor(std::unique_ptr<tflite::Interpreter> *interpreter);
 
 private:
-    bool SetWebOSNPUDelegate();
-    bool SetTfLiteGPUDelegate();
+    bool SetWebOSNPUDelegate(std::unique_ptr<tflite::Interpreter> *interpreter);
+    bool SetTfLiteGPUDelegate(std::unique_ptr<tflite::Interpreter> *interpreter);
 
     tflite::ops::builtin::BuiltinOpResolver *resolver_;
-    std::unique_ptr<tflite::Interpreter> *interpreter_;
-    AccelerationPolicyManager *accelerationPolicyManager_;
+    AccelerationPolicyManager accelerationPolicyManager_;
 };
 
 #endif

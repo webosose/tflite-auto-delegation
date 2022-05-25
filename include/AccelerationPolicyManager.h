@@ -19,7 +19,7 @@ public:
         kTfLiteGPUDelegateV2 = 0,
         kWebOSNPU,
     };
-    AccelerationPolicyManager(const std::vector<DelegateType> &supportedDelegates);
+    AccelerationPolicyManager();
 
     virtual ~AccelerationPolicyManager();
 
@@ -27,7 +27,6 @@ public:
     Policy GetPolicy();
 
 private:
-    const std::vector<DelegateType> &supportedDelegates_;
     Policy policy_ = kCPUOnly;
 };
 

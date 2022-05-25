@@ -40,18 +40,17 @@ TEST_F(AutoDelegateSelectorTest, 01_01_selectDelegate_bodypix_CPUOnly)
     std::unique_ptr<tflite::FlatBufferModel> model = tflite::FlatBufferModel::BuildFromFile(model_path.c_str());
     std::unique_ptr<tflite::Interpreter> interpreter;
     tflite::ops::builtin::BuiltinOpResolver resolver;
-    const std::vector<APM::DelegateType> &supportedDelegates = {
-        APM::DelegateType::kTfLiteGPUDelegateV2};
-    APM apm(supportedDelegates);
-
-    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kCPUOnly));
-
-    ADS ads(&resolver, &interpreter, &apm);
     resolver.AddCustom(coral::kPosenetDecoderOp, coral::RegisterPosenetDecoderOp());
+
+    ADS ads(&resolver);
+
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
-    EXPECT_TRUE(ads.SelectDelegate());
+
+    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kCPUOnly;
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
-    EXPECT_TRUE(ads.FillRandomInputTensor());
+    EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
 
@@ -61,18 +60,17 @@ TEST_F(AutoDelegateSelectorTest, 01_02_selectDelegate_bodypix_MaximumPrecision)
     std::unique_ptr<tflite::FlatBufferModel> model = tflite::FlatBufferModel::BuildFromFile(model_path.c_str());
     std::unique_ptr<tflite::Interpreter> interpreter;
     tflite::ops::builtin::BuiltinOpResolver resolver;
-    const std::vector<APM::DelegateType> &supportedDelegates = {
-        APM::DelegateType::kTfLiteGPUDelegateV2};
-    APM apm(supportedDelegates);
-
-    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kMaximumPrecision));
-
-    ADS ads(&resolver, &interpreter, &apm);
     resolver.AddCustom(coral::kPosenetDecoderOp, coral::RegisterPosenetDecoderOp());
+
+    ADS ads(&resolver);
+
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
-    EXPECT_TRUE(ads.SelectDelegate());
+
+    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kMaximumPrecision;
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
-    EXPECT_TRUE(ads.FillRandomInputTensor());
+    EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
 
@@ -82,18 +80,17 @@ TEST_F(AutoDelegateSelectorTest, 01_03_selectDelegate_bodypix_MinimumLatency)
     std::unique_ptr<tflite::FlatBufferModel> model = tflite::FlatBufferModel::BuildFromFile(model_path.c_str());
     std::unique_ptr<tflite::Interpreter> interpreter;
     tflite::ops::builtin::BuiltinOpResolver resolver;
-    const std::vector<APM::DelegateType> &supportedDelegates = {
-        APM::DelegateType::kTfLiteGPUDelegateV2};
-    APM apm(supportedDelegates);
-
-    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kMinimumLatency));
-
-    ADS ads(&resolver, &interpreter, &apm);
     resolver.AddCustom(coral::kPosenetDecoderOp, coral::RegisterPosenetDecoderOp());
+
+    ADS ads(&resolver);
+
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
-    EXPECT_TRUE(ads.SelectDelegate());
+
+    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kMinimumLatency;
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
-    EXPECT_TRUE(ads.FillRandomInputTensor());
+    EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
 
@@ -103,17 +100,16 @@ TEST_F(AutoDelegateSelectorTest, 02_01_selectDelegate_deeplab_CPUOnly)
     std::unique_ptr<tflite::FlatBufferModel> model = tflite::FlatBufferModel::BuildFromFile(model_path.c_str());
     std::unique_ptr<tflite::Interpreter> interpreter;
     tflite::ops::builtin::BuiltinOpResolver resolver;
-    const std::vector<APM::DelegateType> &supportedDelegates = {
-        APM::DelegateType::kTfLiteGPUDelegateV2};
-    APM apm(supportedDelegates);
 
-    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kCPUOnly));
+    ADS ads(&resolver);
 
-    ADS ads(&resolver, &interpreter, &apm);
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
-    EXPECT_TRUE(ads.SelectDelegate());
+
+    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kCPUOnly;
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
-    EXPECT_TRUE(ads.FillRandomInputTensor());
+    EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
 
@@ -123,17 +119,16 @@ TEST_F(AutoDelegateSelectorTest, 02_02_selectDelegate_deeplab_MaximumPrecision)
     std::unique_ptr<tflite::FlatBufferModel> model = tflite::FlatBufferModel::BuildFromFile(model_path.c_str());
     std::unique_ptr<tflite::Interpreter> interpreter;
     tflite::ops::builtin::BuiltinOpResolver resolver;
-    const std::vector<APM::DelegateType> &supportedDelegates = {
-        APM::DelegateType::kTfLiteGPUDelegateV2};
-    APM apm(supportedDelegates);
 
-    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kMaximumPrecision));
+    ADS ads(&resolver);
 
-    ADS ads(&resolver, &interpreter, &apm);
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
-    EXPECT_TRUE(ads.SelectDelegate());
+
+    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kMaximumPrecision;
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
-    EXPECT_TRUE(ads.FillRandomInputTensor());
+    EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
 
@@ -143,17 +138,16 @@ TEST_F(AutoDelegateSelectorTest, 02_03_selectDelegate_deeplab_MinimumLatency)
     std::unique_ptr<tflite::FlatBufferModel> model = tflite::FlatBufferModel::BuildFromFile(model_path.c_str());
     std::unique_ptr<tflite::Interpreter> interpreter;
     tflite::ops::builtin::BuiltinOpResolver resolver;
-    const std::vector<APM::DelegateType> &supportedDelegates = {
-        APM::DelegateType::kTfLiteGPUDelegateV2};
-    APM apm(supportedDelegates);
 
-    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kMinimumLatency));
+    ADS ads(&resolver);
 
-    ADS ads(&resolver, &interpreter, &apm);
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
-    EXPECT_TRUE(ads.SelectDelegate());
+
+    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kMinimumLatency;
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
-    EXPECT_TRUE(ads.FillRandomInputTensor());
+    EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
 
@@ -163,17 +157,16 @@ TEST_F(AutoDelegateSelectorTest, 03_01_selectDelegate_fdfull_CPUOnly)
     std::unique_ptr<tflite::FlatBufferModel> model = tflite::FlatBufferModel::BuildFromFile(model_path.c_str());
     std::unique_ptr<tflite::Interpreter> interpreter;
     tflite::ops::builtin::BuiltinOpResolver resolver;
-    const std::vector<APM::DelegateType> &supportedDelegates = {
-        APM::DelegateType::kTfLiteGPUDelegateV2};
-    APM apm(supportedDelegates);
 
-    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kCPUOnly));
+    ADS ads(&resolver);
 
-    ADS ads(&resolver, &interpreter, &apm);
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
-    EXPECT_TRUE(ads.SelectDelegate());
+
+    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kCPUOnly;
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
-    EXPECT_TRUE(ads.FillRandomInputTensor());
+    EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
 
@@ -183,17 +176,16 @@ TEST_F(AutoDelegateSelectorTest, 03_02_selectDelegate_fdfull_MaximumPrecision)
     std::unique_ptr<tflite::FlatBufferModel> model = tflite::FlatBufferModel::BuildFromFile(model_path.c_str());
     std::unique_ptr<tflite::Interpreter> interpreter;
     tflite::ops::builtin::BuiltinOpResolver resolver;
-    const std::vector<APM::DelegateType> &supportedDelegates = {
-        APM::DelegateType::kTfLiteGPUDelegateV2};
-    APM apm(supportedDelegates);
 
-    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kMaximumPrecision));
+    ADS ads(&resolver);
 
-    ADS ads(&resolver, &interpreter, &apm);
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
-    EXPECT_TRUE(ads.SelectDelegate());
+
+    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kMaximumPrecision;
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
-    EXPECT_TRUE(ads.FillRandomInputTensor());
+    EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
 
@@ -203,17 +195,16 @@ TEST_F(AutoDelegateSelectorTest, 03_03_selectDelegate_fdfull_MinimumLatency)
     std::unique_ptr<tflite::FlatBufferModel> model = tflite::FlatBufferModel::BuildFromFile(model_path.c_str());
     std::unique_ptr<tflite::Interpreter> interpreter;
     tflite::ops::builtin::BuiltinOpResolver resolver;
-    const std::vector<APM::DelegateType> &supportedDelegates = {
-        APM::DelegateType::kTfLiteGPUDelegateV2};
-    APM apm(supportedDelegates);
 
-    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kMinimumLatency));
+    ADS ads(&resolver);
 
-    ADS ads(&resolver, &interpreter, &apm);
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
-    EXPECT_TRUE(ads.SelectDelegate());
+
+    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kMinimumLatency;
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
-    EXPECT_TRUE(ads.FillRandomInputTensor());
+    EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
 
@@ -223,17 +214,16 @@ TEST_F(AutoDelegateSelectorTest, 04_01_selectDelegate_fdshort_CPUOnly)
     std::unique_ptr<tflite::FlatBufferModel> model = tflite::FlatBufferModel::BuildFromFile(model_path.c_str());
     std::unique_ptr<tflite::Interpreter> interpreter;
     tflite::ops::builtin::BuiltinOpResolver resolver;
-    const std::vector<APM::DelegateType> &supportedDelegates = {
-        APM::DelegateType::kTfLiteGPUDelegateV2};
-    APM apm(supportedDelegates);
 
-    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kCPUOnly));
+    ADS ads(&resolver);
 
-    ADS ads(&resolver, &interpreter, &apm);
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
-    EXPECT_TRUE(ads.SelectDelegate());
+
+    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kCPUOnly;
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
-    EXPECT_TRUE(ads.FillRandomInputTensor());
+    EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
 
@@ -243,17 +233,16 @@ TEST_F(AutoDelegateSelectorTest, 04_02_selectDelegate_fdshort_MaximumPrecision)
     std::unique_ptr<tflite::FlatBufferModel> model = tflite::FlatBufferModel::BuildFromFile(model_path.c_str());
     std::unique_ptr<tflite::Interpreter> interpreter;
     tflite::ops::builtin::BuiltinOpResolver resolver;
-    const std::vector<APM::DelegateType> &supportedDelegates = {
-        APM::DelegateType::kTfLiteGPUDelegateV2};
-    APM apm(supportedDelegates);
 
-    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kMaximumPrecision));
+    ADS ads(&resolver);
 
-    ADS ads(&resolver, &interpreter, &apm);
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
-    EXPECT_TRUE(ads.SelectDelegate());
+
+    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kMaximumPrecision;
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
-    EXPECT_TRUE(ads.FillRandomInputTensor());
+    EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
 
@@ -263,17 +252,16 @@ TEST_F(AutoDelegateSelectorTest, 04_03_selectDelegate_fdshort_MinimumLatency)
     std::unique_ptr<tflite::FlatBufferModel> model = tflite::FlatBufferModel::BuildFromFile(model_path.c_str());
     std::unique_ptr<tflite::Interpreter> interpreter;
     tflite::ops::builtin::BuiltinOpResolver resolver;
-    const std::vector<APM::DelegateType> &supportedDelegates = {
-        APM::DelegateType::kTfLiteGPUDelegateV2};
-    APM apm(supportedDelegates);
 
-    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kMinimumLatency));
+    ADS ads(&resolver);
 
-    ADS ads(&resolver, &interpreter, &apm);
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
-    EXPECT_TRUE(ads.SelectDelegate());
+
+    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kMinimumLatency;
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
-    EXPECT_TRUE(ads.FillRandomInputTensor());
+    EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
 
@@ -283,17 +271,16 @@ TEST_F(AutoDelegateSelectorTest, 05_01_selectDelegate_handlandmark_CPUOnly)
     std::unique_ptr<tflite::FlatBufferModel> model = tflite::FlatBufferModel::BuildFromFile(model_path.c_str());
     std::unique_ptr<tflite::Interpreter> interpreter;
     tflite::ops::builtin::BuiltinOpResolver resolver;
-    const std::vector<APM::DelegateType> &supportedDelegates = {
-        APM::DelegateType::kTfLiteGPUDelegateV2};
-    APM apm(supportedDelegates);
 
-    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kCPUOnly));
+    ADS ads(&resolver);
 
-    ADS ads(&resolver, &interpreter, &apm);
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
-    EXPECT_TRUE(ads.SelectDelegate());
+
+    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kCPUOnly;
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
-    EXPECT_TRUE(ads.FillRandomInputTensor());
+    EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
 
@@ -303,17 +290,16 @@ TEST_F(AutoDelegateSelectorTest, 05_02_selectDelegate_handlandmark_MaximumPrecis
     std::unique_ptr<tflite::FlatBufferModel> model = tflite::FlatBufferModel::BuildFromFile(model_path.c_str());
     std::unique_ptr<tflite::Interpreter> interpreter;
     tflite::ops::builtin::BuiltinOpResolver resolver;
-    const std::vector<APM::DelegateType> &supportedDelegates = {
-        APM::DelegateType::kTfLiteGPUDelegateV2};
-    APM apm(supportedDelegates);
 
-    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kMaximumPrecision));
+    ADS ads(&resolver);
 
-    ADS ads(&resolver, &interpreter, &apm);
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
-    EXPECT_TRUE(ads.SelectDelegate());
+
+    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kMaximumPrecision;
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
-    EXPECT_TRUE(ads.FillRandomInputTensor());
+    EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
 
@@ -323,17 +309,16 @@ TEST_F(AutoDelegateSelectorTest, 05_03_selectDelegate_handlandmark_MinimumLatenc
     std::unique_ptr<tflite::FlatBufferModel> model = tflite::FlatBufferModel::BuildFromFile(model_path.c_str());
     std::unique_ptr<tflite::Interpreter> interpreter;
     tflite::ops::builtin::BuiltinOpResolver resolver;
-    const std::vector<APM::DelegateType> &supportedDelegates = {
-        APM::DelegateType::kTfLiteGPUDelegateV2};
-    APM apm(supportedDelegates);
 
-    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kMinimumLatency));
+    ADS ads(&resolver);
 
-    ADS ads(&resolver, &interpreter, &apm);
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
-    EXPECT_TRUE(ads.SelectDelegate());
+
+    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kMinimumLatency;
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
-    EXPECT_TRUE(ads.FillRandomInputTensor());
+    EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
 
@@ -343,17 +328,16 @@ TEST_F(AutoDelegateSelectorTest, 06_01_selectDelegate_movenet_CPUOnly)
     std::unique_ptr<tflite::FlatBufferModel> model = tflite::FlatBufferModel::BuildFromFile(model_path.c_str());
     std::unique_ptr<tflite::Interpreter> interpreter;
     tflite::ops::builtin::BuiltinOpResolver resolver;
-    const std::vector<APM::DelegateType> &supportedDelegates = {
-        APM::DelegateType::kTfLiteGPUDelegateV2};
-    APM apm(supportedDelegates);
 
-    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kCPUOnly));
+    ADS ads(&resolver);
 
-    ADS ads(&resolver, &interpreter, &apm);
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
-    EXPECT_TRUE(ads.SelectDelegate());
+
+    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kCPUOnly;
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
-    EXPECT_TRUE(ads.FillRandomInputTensor());
+    EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
 
@@ -363,17 +347,16 @@ TEST_F(AutoDelegateSelectorTest, 06_02_selectDelegate_movenet_MaximumPrecision)
     std::unique_ptr<tflite::FlatBufferModel> model = tflite::FlatBufferModel::BuildFromFile(model_path.c_str());
     std::unique_ptr<tflite::Interpreter> interpreter;
     tflite::ops::builtin::BuiltinOpResolver resolver;
-    const std::vector<APM::DelegateType> &supportedDelegates = {
-        APM::DelegateType::kTfLiteGPUDelegateV2};
-    APM apm(supportedDelegates);
 
-    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kMaximumPrecision));
+    ADS ads(&resolver);
 
-    ADS ads(&resolver, &interpreter, &apm);
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
-    EXPECT_TRUE(ads.SelectDelegate());
+
+    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kMaximumPrecision;
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
-    EXPECT_TRUE(ads.FillRandomInputTensor());
+    EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
 
@@ -383,17 +366,16 @@ TEST_F(AutoDelegateSelectorTest, 06_03_selectDelegate_movenet_MinimumLatency)
     std::unique_ptr<tflite::FlatBufferModel> model = tflite::FlatBufferModel::BuildFromFile(model_path.c_str());
     std::unique_ptr<tflite::Interpreter> interpreter;
     tflite::ops::builtin::BuiltinOpResolver resolver;
-    const std::vector<APM::DelegateType> &supportedDelegates = {
-        APM::DelegateType::kTfLiteGPUDelegateV2};
-    APM apm(supportedDelegates);
 
-    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kMinimumLatency));
+    ADS ads(&resolver);
 
-    ADS ads(&resolver, &interpreter, &apm);
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
-    EXPECT_TRUE(ads.SelectDelegate());
+
+    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kMinimumLatency;
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
-    EXPECT_TRUE(ads.FillRandomInputTensor());
+    EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
 
@@ -403,17 +385,16 @@ TEST_F(AutoDelegateSelectorTest, 07_01_selectDelegate_palmdetect_CPUOnly)
     std::unique_ptr<tflite::FlatBufferModel> model = tflite::FlatBufferModel::BuildFromFile(model_path.c_str());
     std::unique_ptr<tflite::Interpreter> interpreter;
     tflite::ops::builtin::BuiltinOpResolver resolver;
-    const std::vector<APM::DelegateType> &supportedDelegates = {
-        APM::DelegateType::kTfLiteGPUDelegateV2};
-    APM apm(supportedDelegates);
 
-    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kCPUOnly));
+    ADS ads(&resolver);
 
-    ADS ads(&resolver, &interpreter, &apm);
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
-    EXPECT_TRUE(ads.SelectDelegate());
+
+    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kCPUOnly;
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
-    EXPECT_TRUE(ads.FillRandomInputTensor());
+    EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
 
@@ -423,17 +404,16 @@ TEST_F(AutoDelegateSelectorTest, 07_02_selectDelegate_palmdetect_MaximumPrecisio
     std::unique_ptr<tflite::FlatBufferModel> model = tflite::FlatBufferModel::BuildFromFile(model_path.c_str());
     std::unique_ptr<tflite::Interpreter> interpreter;
     tflite::ops::builtin::BuiltinOpResolver resolver;
-    const std::vector<APM::DelegateType> &supportedDelegates = {
-        APM::DelegateType::kTfLiteGPUDelegateV2};
-    APM apm(supportedDelegates);
 
-    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kMaximumPrecision));
+    ADS ads(&resolver);
 
-    ADS ads(&resolver, &interpreter, &apm);
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
-    EXPECT_TRUE(ads.SelectDelegate());
+
+    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kMaximumPrecision;
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
-    EXPECT_TRUE(ads.FillRandomInputTensor());
+    EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
 
@@ -443,17 +423,16 @@ TEST_F(AutoDelegateSelectorTest, 07_03_selectDelegate_palmdetect_MinimumLatency)
     std::unique_ptr<tflite::FlatBufferModel> model = tflite::FlatBufferModel::BuildFromFile(model_path.c_str());
     std::unique_ptr<tflite::Interpreter> interpreter;
     tflite::ops::builtin::BuiltinOpResolver resolver;
-    const std::vector<APM::DelegateType> &supportedDelegates = {
-        APM::DelegateType::kTfLiteGPUDelegateV2};
-    APM apm(supportedDelegates);
 
-    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kMinimumLatency));
+    ADS ads(&resolver);
 
-    ADS ads(&resolver, &interpreter, &apm);
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
-    EXPECT_TRUE(ads.SelectDelegate());
+
+    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kMinimumLatency;
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
-    EXPECT_TRUE(ads.FillRandomInputTensor());
+    EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
 
@@ -463,17 +442,16 @@ TEST_F(AutoDelegateSelectorTest, 08_01_selectDelegate_poselandmark_CPUOnly)
     std::unique_ptr<tflite::FlatBufferModel> model = tflite::FlatBufferModel::BuildFromFile(model_path.c_str());
     std::unique_ptr<tflite::Interpreter> interpreter;
     tflite::ops::builtin::BuiltinOpResolver resolver;
-    const std::vector<APM::DelegateType> &supportedDelegates = {
-        APM::DelegateType::kTfLiteGPUDelegateV2};
-    APM apm(supportedDelegates);
 
-    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kCPUOnly));
+    ADS ads(&resolver);
 
-    ADS ads(&resolver, &interpreter, &apm);
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
-    EXPECT_TRUE(ads.SelectDelegate());
+
+    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kCPUOnly;
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
-    EXPECT_TRUE(ads.FillRandomInputTensor());
+    EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
 
@@ -483,17 +461,16 @@ TEST_F(AutoDelegateSelectorTest, 08_02_selectDelegate_poselandmark_MaximumPrecis
     std::unique_ptr<tflite::FlatBufferModel> model = tflite::FlatBufferModel::BuildFromFile(model_path.c_str());
     std::unique_ptr<tflite::Interpreter> interpreter;
     tflite::ops::builtin::BuiltinOpResolver resolver;
-    const std::vector<APM::DelegateType> &supportedDelegates = {
-        APM::DelegateType::kTfLiteGPUDelegateV2};
-    APM apm(supportedDelegates);
 
-    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kMaximumPrecision));
+    ADS ads(&resolver);
 
-    ADS ads(&resolver, &interpreter, &apm);
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
-    EXPECT_TRUE(ads.SelectDelegate());
+
+    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kMaximumPrecision;
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
-    EXPECT_TRUE(ads.FillRandomInputTensor());
+    EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
 
@@ -503,17 +480,16 @@ TEST_F(AutoDelegateSelectorTest, 08_03_selectDelegate_poselandmark_MinimumLatenc
     std::unique_ptr<tflite::FlatBufferModel> model = tflite::FlatBufferModel::BuildFromFile(model_path.c_str());
     std::unique_ptr<tflite::Interpreter> interpreter;
     tflite::ops::builtin::BuiltinOpResolver resolver;
-    const std::vector<APM::DelegateType> &supportedDelegates = {
-        APM::DelegateType::kTfLiteGPUDelegateV2};
-    APM apm(supportedDelegates);
 
-    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kMinimumLatency));
+    ADS ads(&resolver);
 
-    ADS ads(&resolver, &interpreter, &apm);
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
-    EXPECT_TRUE(ads.SelectDelegate());
+
+    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kMinimumLatency;
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
-    EXPECT_TRUE(ads.FillRandomInputTensor());
+    EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
 
@@ -523,18 +499,17 @@ TEST_F(AutoDelegateSelectorTest, 09_01_selectDelegate_posenet_CPUOnly)
     std::unique_ptr<tflite::FlatBufferModel> model = tflite::FlatBufferModel::BuildFromFile(model_path.c_str());
     std::unique_ptr<tflite::Interpreter> interpreter;
     tflite::ops::builtin::BuiltinOpResolver resolver;
-    const std::vector<APM::DelegateType> &supportedDelegates = {
-        APM::DelegateType::kTfLiteGPUDelegateV2};
-    APM apm(supportedDelegates);
-
-    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kCPUOnly));
-
-    ADS ads(&resolver, &interpreter, &apm);
     resolver.AddCustom(coral::kPosenetDecoderOp, coral::RegisterPosenetDecoderOp());
+
+    ADS ads(&resolver);
+
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
-    EXPECT_TRUE(ads.SelectDelegate());
+
+    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kCPUOnly;
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
-    EXPECT_TRUE(ads.FillRandomInputTensor());
+    EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
 
@@ -544,18 +519,17 @@ TEST_F(AutoDelegateSelectorTest, 09_02_selectDelegate_posenet_MaximumPrecision)
     std::unique_ptr<tflite::FlatBufferModel> model = tflite::FlatBufferModel::BuildFromFile(model_path.c_str());
     std::unique_ptr<tflite::Interpreter> interpreter;
     tflite::ops::builtin::BuiltinOpResolver resolver;
-    const std::vector<APM::DelegateType> &supportedDelegates = {
-        APM::DelegateType::kTfLiteGPUDelegateV2};
-    APM apm(supportedDelegates);
-
-    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kMaximumPrecision));
-
-    ADS ads(&resolver, &interpreter, &apm);
     resolver.AddCustom(coral::kPosenetDecoderOp, coral::RegisterPosenetDecoderOp());
+
+    ADS ads(&resolver);
+
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
-    EXPECT_TRUE(ads.SelectDelegate());
+
+    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kMaximumPrecision;
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
-    EXPECT_TRUE(ads.FillRandomInputTensor());
+    EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
 
@@ -565,18 +539,17 @@ TEST_F(AutoDelegateSelectorTest, 09_03_selectDelegate_posenet_MinimumLatency)
     std::unique_ptr<tflite::FlatBufferModel> model = tflite::FlatBufferModel::BuildFromFile(model_path.c_str());
     std::unique_ptr<tflite::Interpreter> interpreter;
     tflite::ops::builtin::BuiltinOpResolver resolver;
-    const std::vector<APM::DelegateType> &supportedDelegates = {
-        APM::DelegateType::kTfLiteGPUDelegateV2};
-    APM apm(supportedDelegates);
-
-    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kMinimumLatency));
-
-    ADS ads(&resolver, &interpreter, &apm);
     resolver.AddCustom(coral::kPosenetDecoderOp, coral::RegisterPosenetDecoderOp());
+
+    ADS ads(&resolver);
+
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
-    EXPECT_TRUE(ads.SelectDelegate());
+
+    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kMinimumLatency;
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
-    EXPECT_TRUE(ads.FillRandomInputTensor());
+    EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
 
@@ -586,18 +559,16 @@ TEST_F(AutoDelegateSelectorTest, 10_01_selectDelegate_selfiesegmentation_CPUOnly
     std::unique_ptr<tflite::FlatBufferModel> model = tflite::FlatBufferModel::BuildFromFile(model_path.c_str());
     std::unique_ptr<tflite::Interpreter> interpreter;
     tflite::ops::builtin::BuiltinOpResolver resolver;
-    const std::vector<APM::DelegateType> &supportedDelegates = {
-        APM::DelegateType::kTfLiteGPUDelegateV2};
-    APM apm(supportedDelegates);
-
-    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kCPUOnly));
-
-    ADS ads(&resolver, &interpreter, &apm);
     resolver.AddCustom("Convolution2DTransposeBias", mediapipe::tflite_operations::RegisterConvolution2DTransposeBias());
+
+    ADS ads(&resolver);
+
+    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kCPUOnly;
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
-    EXPECT_TRUE(ads.SelectDelegate());
+
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
-    EXPECT_TRUE(ads.FillRandomInputTensor());
+    EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
 
@@ -607,18 +578,17 @@ TEST_F(AutoDelegateSelectorTest, 10_02_selectDelegate_selfiesegmentation_Maximum
     std::unique_ptr<tflite::FlatBufferModel> model = tflite::FlatBufferModel::BuildFromFile(model_path.c_str());
     std::unique_ptr<tflite::Interpreter> interpreter;
     tflite::ops::builtin::BuiltinOpResolver resolver;
-    const std::vector<APM::DelegateType> &supportedDelegates = {
-        APM::DelegateType::kTfLiteGPUDelegateV2};
-    APM apm(supportedDelegates);
-
-    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kMaximumPrecision));
-
-    ADS ads(&resolver, &interpreter, &apm);
     resolver.AddCustom("Convolution2DTransposeBias", mediapipe::tflite_operations::RegisterConvolution2DTransposeBias());
+
+    ADS ads(&resolver);
+
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
-    EXPECT_TRUE(ads.SelectDelegate());
+
+    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kMaximumPrecision;
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
-    EXPECT_TRUE(ads.FillRandomInputTensor());
+    EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
 
@@ -628,17 +598,16 @@ TEST_F(AutoDelegateSelectorTest, 10_03_selectDelegate_selfiesegmentation_Minimum
     std::unique_ptr<tflite::FlatBufferModel> model = tflite::FlatBufferModel::BuildFromFile(model_path.c_str());
     std::unique_ptr<tflite::Interpreter> interpreter;
     tflite::ops::builtin::BuiltinOpResolver resolver;
-    const std::vector<APM::DelegateType> &supportedDelegates = {
-        APM::DelegateType::kTfLiteGPUDelegateV2};
-    APM apm(supportedDelegates);
-
-    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kMinimumLatency));
-
-    ADS ads(&resolver, &interpreter, &apm);
     resolver.AddCustom("Convolution2DTransposeBias", mediapipe::tflite_operations::RegisterConvolution2DTransposeBias());
+
+    ADS ads(&resolver);
+
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
-    EXPECT_TRUE(ads.SelectDelegate());
+
+    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kMinimumLatency;
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
-    EXPECT_TRUE(ads.FillRandomInputTensor());
+    EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }

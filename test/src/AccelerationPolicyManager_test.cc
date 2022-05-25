@@ -20,19 +20,14 @@ protected:
 
 TEST_F(AccelerationPolicyManagerTest, 01_default_policy)
 {
-    const std::vector<APM::DelegateType> &supportedDelegates = {
-        APM::DelegateType::kTfLiteGPUDelegateV2};
-    APM apm(supportedDelegates);
+    APM apm;
 
     EXPECT_EQ(apm.GetPolicy(), APM::kCPUOnly);
 }
 
 TEST_F(AccelerationPolicyManagerTest, 02_set_and_get_policy)
 {
-    const std::vector<APM::DelegateType> &supportedDelegates = {
-        APM::DelegateType::kTfLiteGPUDelegateV2,
-        APM::DelegateType::kWebOSNPU};
-    APM apm(supportedDelegates);
+    APM apm;
 
     EXPECT_TRUE(apm.SetPolicy(APM::kCPUOnly));
     EXPECT_EQ(apm.GetPolicy(), APM::kCPUOnly);
