@@ -1,7 +1,8 @@
 #ifndef ACCELERATIONPOLICYMANAGER_H_
 #define ACCELERATIONPOLICYMANAGER_H_
-#include <iostream>
 #include <vector>
+#include <string>
+#include "rapidjson/document.h"
 
 class AccelerationPolicyManager
 {
@@ -14,20 +15,21 @@ public:
         kEnableLoadBalancing,
     };
 
-    enum DelegateType
-    {
-        kTfLiteGPUDelegateV2 = 0,
-        kWebOSNPU,
-    };
     AccelerationPolicyManager();
+    AccelerationPolicyManager(std::string config);
 
     virtual ~AccelerationPolicyManager();
 
     bool SetPolicy(Policy policy);
     Policy GetPolicy();
 
+    bool SetCPUFallbackPercentage(int percentage);
+    int GetCPUFallbackPercentage();
+
 private:
+    Policy stringToPolicy(std::string policy);
     Policy policy_ = kCPUOnly;
+    int cpu_fallback_percentage_ = 0;
 };
 
 #endif

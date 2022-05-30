@@ -2,8 +2,9 @@
 #include <AutoDelegateSelector.h>
 
 // custom ops
-#include "customOp/transpose_conv_bias.h"
-#include "customOp/posenet_decoder_op.h"
+#include <aif/selfie/transpose_conv_bias.h>
+#include <aif/pose/posenet_decoder_op.h>
+#include <aif/pose/posenet_decoder.h>
 
 typedef AutoDelegateSelector ADS;
 typedef AccelerationPolicyManager APM;
@@ -46,8 +47,10 @@ TEST_F(AutoDelegateSelectorTest, 01_01_selectDelegate_bodypix_CPUOnly)
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
-    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kCPUOnly;
-    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+    AccelerationPolicyManager apm;
+    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kCPUOnly));
+
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
     EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
@@ -66,8 +69,10 @@ TEST_F(AutoDelegateSelectorTest, 01_02_selectDelegate_bodypix_MaximumPrecision)
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
-    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kMaximumPrecision;
-    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+    AccelerationPolicyManager apm;
+    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kMaximumPrecision));
+
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
     EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
@@ -86,8 +91,10 @@ TEST_F(AutoDelegateSelectorTest, 01_03_selectDelegate_bodypix_MinimumLatency)
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
-    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kMinimumLatency;
-    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+    AccelerationPolicyManager apm;
+    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kMinimumLatency));
+
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
     EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
@@ -105,8 +112,10 @@ TEST_F(AutoDelegateSelectorTest, 02_01_selectDelegate_deeplab_CPUOnly)
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
-    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kCPUOnly;
-    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+    AccelerationPolicyManager apm;
+    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kCPUOnly));
+
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
     EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
@@ -124,8 +133,10 @@ TEST_F(AutoDelegateSelectorTest, 02_02_selectDelegate_deeplab_MaximumPrecision)
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
-    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kMaximumPrecision;
-    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+    AccelerationPolicyManager apm;
+    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kMaximumPrecision));
+
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
     EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
@@ -143,8 +154,10 @@ TEST_F(AutoDelegateSelectorTest, 02_03_selectDelegate_deeplab_MinimumLatency)
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
-    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kMinimumLatency;
-    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+    AccelerationPolicyManager apm;
+    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kMinimumLatency));
+
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
     EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
@@ -162,8 +175,10 @@ TEST_F(AutoDelegateSelectorTest, 03_01_selectDelegate_fdfull_CPUOnly)
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
-    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kCPUOnly;
-    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+    AccelerationPolicyManager apm;
+    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kCPUOnly));
+
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
     EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
@@ -181,8 +196,10 @@ TEST_F(AutoDelegateSelectorTest, 03_02_selectDelegate_fdfull_MaximumPrecision)
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
-    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kMaximumPrecision;
-    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+    AccelerationPolicyManager apm;
+    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kMaximumPrecision));
+
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
     EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
@@ -200,8 +217,10 @@ TEST_F(AutoDelegateSelectorTest, 03_03_selectDelegate_fdfull_MinimumLatency)
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
-    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kMinimumLatency;
-    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+    AccelerationPolicyManager apm;
+    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kMinimumLatency));
+
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
     EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
@@ -219,8 +238,10 @@ TEST_F(AutoDelegateSelectorTest, 04_01_selectDelegate_fdshort_CPUOnly)
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
-    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kCPUOnly;
-    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+    AccelerationPolicyManager apm;
+    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kCPUOnly));
+
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
     EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
@@ -238,8 +259,10 @@ TEST_F(AutoDelegateSelectorTest, 04_02_selectDelegate_fdshort_MaximumPrecision)
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
-    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kMaximumPrecision;
-    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+    AccelerationPolicyManager apm;
+    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kMaximumPrecision));
+
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
     EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
@@ -257,8 +280,10 @@ TEST_F(AutoDelegateSelectorTest, 04_03_selectDelegate_fdshort_MinimumLatency)
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
-    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kMinimumLatency;
-    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+    AccelerationPolicyManager apm;
+    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kMinimumLatency));
+
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
     EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
@@ -276,8 +301,10 @@ TEST_F(AutoDelegateSelectorTest, 05_01_selectDelegate_handlandmark_CPUOnly)
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
-    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kCPUOnly;
-    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+    AccelerationPolicyManager apm;
+    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kCPUOnly));
+
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
     EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
@@ -295,8 +322,10 @@ TEST_F(AutoDelegateSelectorTest, 05_02_selectDelegate_handlandmark_MaximumPrecis
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
-    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kMaximumPrecision;
-    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+    AccelerationPolicyManager apm;
+    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kMaximumPrecision));
+
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
     EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
@@ -314,8 +343,10 @@ TEST_F(AutoDelegateSelectorTest, 05_03_selectDelegate_handlandmark_MinimumLatenc
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
-    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kMinimumLatency;
-    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+    AccelerationPolicyManager apm;
+    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kMinimumLatency));
+
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
     EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
@@ -333,8 +364,10 @@ TEST_F(AutoDelegateSelectorTest, 06_01_selectDelegate_movenet_CPUOnly)
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
-    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kCPUOnly;
-    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+    AccelerationPolicyManager apm;
+    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kCPUOnly));
+
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
     EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
@@ -352,8 +385,10 @@ TEST_F(AutoDelegateSelectorTest, 06_02_selectDelegate_movenet_MaximumPrecision)
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
-    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kMaximumPrecision;
-    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+    AccelerationPolicyManager apm;
+    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kMaximumPrecision));
+
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
     EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
@@ -371,8 +406,10 @@ TEST_F(AutoDelegateSelectorTest, 06_03_selectDelegate_movenet_MinimumLatency)
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
-    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kMinimumLatency;
-    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+    AccelerationPolicyManager apm;
+    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kMinimumLatency));
+
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
     EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
@@ -390,8 +427,10 @@ TEST_F(AutoDelegateSelectorTest, 07_01_selectDelegate_palmdetect_CPUOnly)
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
-    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kCPUOnly;
-    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+    AccelerationPolicyManager apm;
+    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kCPUOnly));
+
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
     EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
@@ -409,8 +448,10 @@ TEST_F(AutoDelegateSelectorTest, 07_02_selectDelegate_palmdetect_MaximumPrecisio
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
-    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kMaximumPrecision;
-    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+    AccelerationPolicyManager apm;
+    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kMaximumPrecision));
+
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
     EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
@@ -428,8 +469,10 @@ TEST_F(AutoDelegateSelectorTest, 07_03_selectDelegate_palmdetect_MinimumLatency)
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
-    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kMinimumLatency;
-    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+    AccelerationPolicyManager apm;
+    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kMinimumLatency));
+
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
     EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
@@ -447,8 +490,10 @@ TEST_F(AutoDelegateSelectorTest, 08_01_selectDelegate_poselandmark_CPUOnly)
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
-    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kCPUOnly;
-    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+    AccelerationPolicyManager apm;
+    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kCPUOnly));
+
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
     EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
@@ -466,8 +511,10 @@ TEST_F(AutoDelegateSelectorTest, 08_02_selectDelegate_poselandmark_MaximumPrecis
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
-    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kMaximumPrecision;
-    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+    AccelerationPolicyManager apm;
+    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kMaximumPrecision));
+
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
     EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
@@ -485,8 +532,10 @@ TEST_F(AutoDelegateSelectorTest, 08_03_selectDelegate_poselandmark_MinimumLatenc
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
-    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kMinimumLatency;
-    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+    AccelerationPolicyManager apm;
+    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kMinimumLatency));
+
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
     EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
@@ -505,8 +554,10 @@ TEST_F(AutoDelegateSelectorTest, 09_01_selectDelegate_posenet_CPUOnly)
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
-    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kCPUOnly;
-    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+    AccelerationPolicyManager apm;
+    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kCPUOnly));
+
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
     EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
@@ -525,8 +576,10 @@ TEST_F(AutoDelegateSelectorTest, 09_02_selectDelegate_posenet_MaximumPrecision)
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
-    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kMaximumPrecision;
-    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+    AccelerationPolicyManager apm;
+    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kMaximumPrecision));
+
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
     EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
@@ -545,8 +598,61 @@ TEST_F(AutoDelegateSelectorTest, 09_03_selectDelegate_posenet_MinimumLatency)
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
-    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kMinimumLatency;
-    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+    AccelerationPolicyManager apm;
+    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kMinimumLatency));
+
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
+
+    EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
+    EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
+    EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
+}
+
+TEST_F(AutoDelegateSelectorTest, 09_04_selectDelegate_posenet_EnableLoadBalancing)
+{
+    std::string model_path = model_paths[8];
+    std::unique_ptr<tflite::FlatBufferModel> model = tflite::FlatBufferModel::BuildFromFile(model_path.c_str());
+    std::unique_ptr<tflite::Interpreter> interpreter;
+    tflite::ops::builtin::BuiltinOpResolver resolver;
+    resolver.AddCustom(coral::kPosenetDecoderOp, coral::RegisterPosenetDecoderOp());
+
+    ADS ads(&resolver);
+
+    EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
+
+    AccelerationPolicyManager apm;
+    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kEnableLoadBalancing));
+    EXPECT_TRUE(apm.SetCPUFallbackPercentage(25));
+
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
+
+    EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
+    EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
+    EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
+}
+
+TEST_F(AutoDelegateSelectorTest, 09_05_selectDelegate_posenet_EnableLoadBalancing)
+{
+    std::string model_path = model_paths[8];
+    std::unique_ptr<tflite::FlatBufferModel> model = tflite::FlatBufferModel::BuildFromFile(model_path.c_str());
+    std::unique_ptr<tflite::Interpreter> interpreter;
+    tflite::ops::builtin::BuiltinOpResolver resolver;
+    resolver.AddCustom(coral::kPosenetDecoderOp, coral::RegisterPosenetDecoderOp());
+
+    ADS ads(&resolver);
+
+    EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
+
+    std::string config(
+        "{\n"
+        "    \"policy\" : \"LOAD_BALANCING\",\n"
+        "    \"cpu_fallback_percentage\": 25\n"
+        "}");
+    APM apm(config);
+    EXPECT_EQ(apm.GetCPUFallbackPercentage(), 25);
+    EXPECT_EQ(apm.GetPolicy(), APM::kEnableLoadBalancing);
+
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
     EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
@@ -563,10 +669,13 @@ TEST_F(AutoDelegateSelectorTest, 10_01_selectDelegate_selfiesegmentation_CPUOnly
 
     ADS ads(&resolver);
 
-    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kCPUOnly;
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
-    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+    AccelerationPolicyManager apm;
+    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kCPUOnly));
+
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
+
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
     EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
@@ -584,8 +693,10 @@ TEST_F(AutoDelegateSelectorTest, 10_02_selectDelegate_selfiesegmentation_Maximum
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
-    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kMaximumPrecision;
-    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+    AccelerationPolicyManager apm;
+    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kMaximumPrecision));
+
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
     EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
@@ -604,8 +715,10 @@ TEST_F(AutoDelegateSelectorTest, 10_03_selectDelegate_selfiesegmentation_Minimum
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
-    AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::kMinimumLatency;
-    EXPECT_TRUE(ads.SelectDelegate(&interpreter, policy));
+    AccelerationPolicyManager apm;
+    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kMinimumLatency));
+
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
     EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));

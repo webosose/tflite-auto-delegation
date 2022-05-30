@@ -10,10 +10,8 @@ AutoDelegateSelector::~AutoDelegateSelector()
 {
 }
 
-bool AutoDelegateSelector::SelectDelegate(std::unique_ptr<tflite::Interpreter> *interpreter, AccelerationPolicyManager::Policy policy)
+bool AutoDelegateSelector::SelectDelegate(std::unique_ptr<tflite::Interpreter> *interpreter, AccelerationPolicyManager *apm)
 {
-  accelerationPolicyManager_.SetPolicy(policy);
-
   tflite::Subgraph &subgraph = (*interpreter)->primary_subgraph();
 
   auto plan = subgraph.execution_plan();
@@ -29,7 +27,7 @@ bool AutoDelegateSelector::SelectDelegate(std::unique_ptr<tflite::Interpreter> *
       // check if the model is NPU compiled
       if (strcmp(registration.custom_name, "webosnpu-custom-op") == 0)
       {
-        if (SetWebOSNPUDelegate(interpreter) == true)
+        if (SetWebOSNPUDelegate(interpreter, apm) == true)
         {
           break;
         }
@@ -42,21 +40,21 @@ bool AutoDelegateSelector::SelectDelegate(std::unique_ptr<tflite::Interpreter> *
     }
   }
 
-  if (accelerationPolicyManager_.GetPolicy() != AccelerationPolicyManager::kCPUOnly)
-    return SetTfLiteGPUDelegate(interpreter);
+  if (apm->GetPolicy() != AccelerationPolicyManager::kCPUOnly)
+    return SetTfLiteGPUDelegate(interpreter, apm);
   else
     return true;
 }
 
-bool AutoDelegateSelector::SetWebOSNPUDelegate(std::unique_ptr<tflite::Interpreter> *interpreter)
+bool AutoDelegateSelector::SetWebOSNPUDelegate(std::unique_ptr<tflite::Interpreter> *interpreter, AccelerationPolicyManager *apm)
 {
   // std::cout << "!!! AutoDelegateSelector::SetWebOSNPUDelegate\n";
   return true;
 }
 
-bool AutoDelegateSelector::SetTfLiteGPUDelegate(std::unique_ptr<tflite::Interpreter> *interpreter)
+bool AutoDelegateSelector::SetTfLiteGPUDelegate(std::unique_ptr<tflite::Interpreter> *interpreter, AccelerationPolicyManager *apm)
 {
-  auto policy = accelerationPolicyManager_.GetPolicy();
+  auto policy = apm->GetPolicy();
   TfLiteGpuDelegateOptionsV2 gpu_opts = TfLiteGpuDelegateOptionsV2Default();
   if (policy == AccelerationPolicyManager::kMinimumLatency)
   {
@@ -66,7 +64,7 @@ bool AutoDelegateSelector::SetTfLiteGPUDelegate(std::unique_ptr<tflite::Interpre
   }
   else if (policy == AccelerationPolicyManager::kEnableLoadBalancing)
   {
-    // gpu_opts.cpu_fallback_percentage = 75;
+    gpu_opts.cpu_fallback_percentage = apm->GetCPUFallbackPercentage();
     gpu_opts.inference_priority1 = TfLiteGpuInferencePriority::TFLITE_GPU_INFERENCE_PRIORITY_MIN_MEMORY_USAGE;
     gpu_opts.inference_priority2 = TfLiteGpuInferencePriority::TFLITE_GPU_INFERENCE_PRIORITY_AUTO;
     gpu_opts.inference_priority3 = TfLiteGpuInferencePriority::TFLITE_GPU_INFERENCE_PRIORITY_AUTO;
@@ -74,7 +72,6 @@ bool AutoDelegateSelector::SetTfLiteGPUDelegate(std::unique_ptr<tflite::Interpre
 
   gpu_opts.experimental_flags |= TFLITE_GPU_EXPERIMENTAL_FLAGS_ENABLE_QUANT;
 
-  //(*interpreter)->SetAllowFp16PrecisionForFp32(true);
   auto *delegate = TfLiteGpuDelegateV2Create(&gpu_opts);
   if ((*interpreter)->ModifyGraphWithDelegate(delegate) != kTfLiteOk)
   {
@@ -116,14 +113,14 @@ bool AutoDelegateSelector::Preview(std::unique_ptr<tflite::Interpreter> *interpr
     {
       const TfLiteTensor &t = *((*interpreter)->tensor(j));
       std::cout << t.name << " (" << TfLiteTypeGetName(t.type) << ", " << inputs->data[j] << ")\n";
-      // TfLiteTensor *tensor_input = (*interpreter)->tensor(inputs->data[j]);
-      // auto dim_size = tensor_input->dims->size;
-      // for (int k = 0; k < dim_size; k++)
-      //{
-      //   std::cout << tensor_input->dims->data[k] << " ";
-      // }
-      // std::cout << "\n";
-      //  std::cout << t.quantization.type << "\n";
+      TfLiteTensor *tensor_input = (*interpreter)->tensor(inputs->data[j]);
+      auto dim_size = tensor_input->dims->size;
+      for (int k = 0; k < dim_size; k++)
+      {
+        std::cout << tensor_input->dims->data[k] << " ";
+      }
+      std::cout << "\n";
+      std::cout << t.quantization.type << "\n";
     }
 
     std::cout << "\nOUTPUTS:\n";
@@ -132,7 +129,6 @@ bool AutoDelegateSelector::Preview(std::unique_ptr<tflite::Interpreter> *interpr
     {
       const TfLiteTensor &t = *((*interpreter)->tensor(j));
       std::cout << t.name << " (" << TfLiteTypeGetName(t.type) << ", " << outputs->data[j] << ")\n";
-      // std::cout << t.quantization.type << "\n";
     }
     std::cout << "\n------------------------------------------------------------\n\n";
   }
