@@ -60,6 +60,7 @@ set(SRC_DIR ${CMAKE_SOURCE_DIR}/auto_delegation/src)
 
 # include directories
 include_directories("${INC_DIR}")
+include_directories("${INC_DIR}/customOp")
 include_directories("${SRC_DIR}")
 include_directories("${CMAKE_SOURCE_DIR}/auto_delegation")
 
@@ -67,6 +68,9 @@ include_directories("${CMAKE_SOURCE_DIR}/auto_delegation")
 set(SRC_FILES
     ${SRC_DIR}/AutoDelegateSelector.cc
     ${SRC_DIR}/AccelerationPolicyManager.cc
+    ${SRC_DIR}/customOp/posenet_decoder_op.cc
+    ${SRC_DIR}/customOp/posenet_decoder.cc
+    ${SRC_DIR}/customOp/transpose_conv_bias.cc
 )
 
 IF(WITH_ARMNN)
@@ -100,5 +104,4 @@ target_link_libraries(${LIB_NAME}
     ${TFLITE_LIBRARIES}
     ${RAPIDJSON_LIBRARIES}
     pthread
-    ai-framework
 )

@@ -59,6 +59,7 @@ set(GTEST_DIR ${CMAKE_SOURCE_DIR}/test/gtest)
 
 # include directories
 include_directories("${INC_DIR}")
+include_directories("${INC_DIR}/customOp")
 include_directories("${SRC_DIR}")
 include_directories("${CMAKE_SOURCE_DIR}/test")
 include_directories("${CMAKE_SOURCE_DIR}/test/gtest")
@@ -71,6 +72,9 @@ set(SRC_FILES
     ${GTEST_DIR}/test_main.cpp
     ${AD_SRC_DIR}/AccelerationPolicyManager.cc
     ${AD_SRC_DIR}/AutoDelegateSelector.cc
+    ${AD_SRC_DIR}/customOp/posenet_decoder_op.cc
+    ${AD_SRC_DIR}/customOp/posenet_decoder.cc
+    ${AD_SRC_DIR}/customOp/transpose_conv_bias.cc
 )
 
 add_executable(${EXE_NAME}
@@ -80,5 +84,4 @@ add_executable(${EXE_NAME}
 target_link_libraries(${EXE_NAME}
     ${TFLITE_LIBRARIES}
     pthread
-    ai-framework
 )

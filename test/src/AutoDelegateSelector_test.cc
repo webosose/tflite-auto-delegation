@@ -2,9 +2,9 @@
 #include <AutoDelegateSelector.h>
 
 // custom ops
-#include <aif/selfie/transpose_conv_bias.h>
-#include <aif/pose/posenet_decoder_op.h>
-#include <aif/pose/posenet_decoder.h>
+#include <customOp/transpose_conv_bias.h>
+#include <customOp/posenet_decoder_op.h>
+#include <customOp/posenet_decoder.h>
 
 typedef AutoDelegateSelector ADS;
 typedef AccelerationPolicyManager APM;
