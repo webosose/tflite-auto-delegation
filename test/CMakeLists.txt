@@ -53,28 +53,31 @@ ENDIF(WITH_EDGETPU)
 ########################################################
 set(EXE_NAME auto_delegation_test)
 set(INC_DIR ${CMAKE_SOURCE_DIR}/include)
-set(SRC_DIR ${CMAKE_SOURCE_DIR}/test/src)
 set(AD_SRC_DIR ${CMAKE_SOURCE_DIR}/auto_delegation/src)
+set(TEST_INC_DIR ${CMAKE_SOURCE_DIR}/test/include)
+set(SRC_DIR ${CMAKE_SOURCE_DIR}/test/src)
 set(GTEST_DIR ${CMAKE_SOURCE_DIR}/test/gtest)
 
 # include directories
 include_directories("${INC_DIR}")
-include_directories("${INC_DIR}/customOp")
+include_directories("${TEST_INC_DIR}")
 include_directories("${SRC_DIR}")
 include_directories("${CMAKE_SOURCE_DIR}/test")
 include_directories("${CMAKE_SOURCE_DIR}/test/gtest")
 
 # Source Files
 set(SRC_FILES
-    ${SRC_DIR}/AccelerationPolicyManager_test.cc
-    ${SRC_DIR}/AutoDelegateSelector_test.cc
-    ${GTEST_DIR}/gtest-all.cc
-    ${GTEST_DIR}/test_main.cpp
     ${AD_SRC_DIR}/AccelerationPolicyManager.cc
     ${AD_SRC_DIR}/AutoDelegateSelector.cc
-    ${AD_SRC_DIR}/customOp/posenet_decoder_op.cc
-    ${AD_SRC_DIR}/customOp/posenet_decoder.cc
-    ${AD_SRC_DIR}/customOp/transpose_conv_bias.cc
+    ${SRC_DIR}/AccelerationPolicyManager_test.cc
+    ${SRC_DIR}/AutoDelegateSelector_test.cc
+    ${SRC_DIR}/customOp/posenet_decoder_op.cc
+    ${SRC_DIR}/customOp/posenet_decoder.cc
+    ${SRC_DIR}/customOp/transpose_conv_bias.cc
+    ${GTEST_DIR}/gtest-all.cc
+    ${GTEST_DIR}/test_main.cpp
+    
+    
 )
 
 add_executable(${EXE_NAME}
