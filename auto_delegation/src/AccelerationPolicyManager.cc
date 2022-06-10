@@ -9,13 +9,16 @@ AccelerationPolicyManager::AccelerationPolicyManager(std::string config)
     rapidjson::Document d;
     d.Parse(config.c_str());
 
-    Policy policy = stringToPolicy(d["policy"].GetString());
-    SetPolicy(policy);
-
-    if (d.FindMember("cpu_fallback_percentage") != d.MemberEnd())
+    if (!d.HasParseError() && d.FindMember("policy") != d.MemberEnd())
     {
-        int cpuFallbackPercentage = d["cpu_fallback_percentage"].GetInt();
-        SetCPUFallbackPercentage(cpuFallbackPercentage);
+        Policy policy = stringToPolicy(d["policy"].GetString());
+        SetPolicy(policy);
+
+        if (d.FindMember("cpu_fallback_percentage") != d.MemberEnd())
+        {
+            int cpuFallbackPercentage = d["cpu_fallback_percentage"].GetInt();
+            SetCPUFallbackPercentage(cpuFallbackPercentage);
+        }
     }
 }
 

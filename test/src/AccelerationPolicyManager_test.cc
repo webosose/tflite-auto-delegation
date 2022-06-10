@@ -46,6 +46,24 @@ TEST_F(AccelerationPolicyManagerTest, 02_02_set_and_get_CPU_ONLY_policy)
     EXPECT_EQ(apm.GetPolicy(), APM::kCPUOnly);
 }
 
+TEST_F(AccelerationPolicyManagerTest, 02_03_set_and_get_CPU_ONLY_policy_empty_json)
+{
+    std::string config("{}");
+
+    APM apm(config);
+
+    EXPECT_EQ(apm.GetPolicy(), APM::kCPUOnly);
+}
+
+TEST_F(AccelerationPolicyManagerTest, 02_04_set_and_get_CPU_ONLY_policy_empty_string)
+{
+    std::string config("");
+
+    APM apm(config);
+
+    EXPECT_EQ(apm.GetPolicy(), APM::kCPUOnly);
+}
+
 TEST_F(AccelerationPolicyManagerTest, 03_01_set_and_get_MAX_PRECISION_policy)
 {
     std::string config(
