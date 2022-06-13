@@ -6,12 +6,14 @@ project (auto_delegation_test)
 ###############################################################
 # find needed packages
 find_package(PkgConfig)
+pkg_check_modules(GTEST REQUIRED gtest_main)
 pkg_check_modules(TFLITE REQUIRED tensorflowlite)
 pkg_check_modules(RAPIDJSON REQUIRED RapidJSON)
 pkg_check_modules(PMLOGLIB REQUIRED PmLogLib)
 
 # include directories
 include_directories(
+    ${GTEST_INCLUDE_DIRS}
     ${TFLITE_INCLUDE_DIRS}
     ${RAPIDJSON_INCLUDE_DIRS}
     ${PMLOGLIB_INCLUDE_DIRS}
@@ -19,6 +21,7 @@ include_directories(
 
 # link directories
 link_directories(
+    ${GTEST_LIBRARY_DIRS}
     ${TFLITE_LIBRARY_DIRS}
     ${RAPIDJSON_LIBRARY_DIRS}
     ${PMLOGLIB_LIBRARY_DIRS}
@@ -39,14 +42,12 @@ set(INC_DIR ${CMAKE_SOURCE_DIR}/include)
 set(AD_SRC_DIR ${CMAKE_SOURCE_DIR}/auto_delegation/src)
 set(TEST_INC_DIR ${CMAKE_SOURCE_DIR}/test/include)
 set(SRC_DIR ${CMAKE_SOURCE_DIR}/test/src)
-set(GTEST_DIR ${CMAKE_SOURCE_DIR}/test/gtest)
 
 # include directories
 include_directories("${INC_DIR}")
 include_directories("${TEST_INC_DIR}")
 include_directories("${SRC_DIR}")
 include_directories("${CMAKE_SOURCE_DIR}/test")
-include_directories("${CMAKE_SOURCE_DIR}/test/gtest")
 
 # Source Files
 set(SRC_FILES
@@ -57,10 +58,13 @@ set(SRC_FILES
     ${SRC_DIR}/customOp/posenet_decoder_op.cc
     ${SRC_DIR}/customOp/posenet_decoder.cc
     ${SRC_DIR}/customOp/transpose_conv_bias.cc
-    ${GTEST_DIR}/gtest-all.cc
-    ${GTEST_DIR}/test_main.cpp
-    
-    
+)
+
+set(LIBS
+    ${TFLITE_LIBRARIES}
+    ${RAPIDJSON_LIBRARIES}
+    ${PMLOGLIB_LDFLAGS}
+    pthread
 )
 
 add_executable(${EXE_NAME}
@@ -68,8 +72,6 @@ add_executable(${EXE_NAME}
 )
 
 target_link_libraries(${EXE_NAME}
-    ${TFLITE_LIBRARIES}
-    ${RAPIDJSON_LIBRARIES}
-    ${PMLOGLIB_LDFLAGS}
-    pthread
+    ${GTEST_LIBRARIES}
+    ${LIBS}
 )
