@@ -12,6 +12,7 @@
 #include <tensorflow/lite/delegates/gpu/delegate.h>
 
 #include "AccelerationPolicyManager.h"
+#include <PmLogLib.h>
 
 class AutoDelegateSelector
 {

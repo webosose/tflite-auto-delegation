@@ -1,0 +1,6 @@
+Name: AI Framework Auto Delegation library
+Description: webos ai framework auto delegation c++ shared library
+Version: @version@
+Requires:
+Libs: -L@libdir@ -lauto-delegation
+Cflags: -I@includedir@
