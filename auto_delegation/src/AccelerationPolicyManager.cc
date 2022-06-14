@@ -28,7 +28,28 @@ AccelerationPolicyManager::~AccelerationPolicyManager()
 
 bool AccelerationPolicyManager::SetPolicy(AccelerationPolicyManager::Policy policy)
 {
+    PmLogContext ad_context;
+    PmLogGetContext("auto_delegation", &ad_context);
+
     policy_ = policy;
+
+    switch (policy_)
+    {
+    case kCPUOnly:
+        PmLogInfo(ad_context, "APM", 0, "Set Acceleration Policy: CPU Only");
+        break;
+    case kMaximumPrecision:
+        PmLogInfo(ad_context, "APM", 0, "Set Acceleration Policy: Maximum Precision");
+        break;
+    case kMinimumLatency:
+        PmLogInfo(ad_context, "APM", 0, "Set Acceleration Policy: Minimum Latency");
+        break;
+    case kEnableLoadBalancing:
+        PmLogInfo(ad_context, "APM", 0, "Set Acceleration Policy: Enable Load Balancing");
+        break;
+    default:
+        break;
+    }
 
     return true;
 }
@@ -40,6 +61,9 @@ AccelerationPolicyManager::Policy AccelerationPolicyManager::GetPolicy()
 
 bool AccelerationPolicyManager::SetCPUFallbackPercentage(int percentage)
 {
+    PmLogContext ad_context;
+    PmLogGetContext("auto_delegation", &ad_context);
+
     if (percentage < 0)
         percentage = 0;
     else if (percentage > 100)
@@ -47,6 +71,8 @@ bool AccelerationPolicyManager::SetCPUFallbackPercentage(int percentage)
 
     this->SetPolicy(kEnableLoadBalancing);
     cpu_fallback_percentage_ = percentage;
+
+    PmLogInfo(ad_context, "APM", 0, "Set CPU Fallback Percentage: %d", cpu_fallback_percentage_);
 
     return true;
 }
@@ -58,6 +84,7 @@ int AccelerationPolicyManager::GetCPUFallbackPercentage()
 
 AccelerationPolicyManager::Policy AccelerationPolicyManager::stringToPolicy(std::string policyStr)
 {
+
     AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::Policy::kCPUOnly;
     if (policyStr.compare("CPU_ONLY") == 0)
         policy = AccelerationPolicyManager::Policy::kCPUOnly;

@@ -1,10 +1,7 @@
 #ifndef AUTODELEGATESELECTOR_H_
 #define AUTODELEGATESELECTOR_H_
 #include <iostream>
-//#include <fstream>
 #include <vector>
-//#include <cstring>
-//#include <chrono>
 
 #include <tensorflow/lite/interpreter.h>
 #include <tensorflow/lite/kernels/register.h>

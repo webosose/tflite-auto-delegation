@@ -12,6 +12,9 @@ AutoDelegateSelector::~AutoDelegateSelector()
 
 bool AutoDelegateSelector::SelectDelegate(std::unique_ptr<tflite::Interpreter> *interpreter, AccelerationPolicyManager *apm)
 {
+  PmLogContext ad_context;
+  PmLogGetContext("auto_delegation", &ad_context);
+
   tflite::Subgraph &subgraph = (*interpreter)->primary_subgraph();
 
   auto plan = subgraph.execution_plan();
@@ -33,7 +36,7 @@ bool AutoDelegateSelector::SelectDelegate(std::unique_ptr<tflite::Interpreter> *
         }
         else
         {
-          // std::cout << "!!! Error: something went wrong while setting webOSNPU Delegate\n";
+          PmLogError(ad_context, "ADS", 0, "Something went wrong while setting webOSNPU delegate");
           return false;
         }
       }
@@ -48,12 +51,14 @@ bool AutoDelegateSelector::SelectDelegate(std::unique_ptr<tflite::Interpreter> *
 
 bool AutoDelegateSelector::SetWebOSNPUDelegate(std::unique_ptr<tflite::Interpreter> *interpreter, AccelerationPolicyManager *apm)
 {
-  // std::cout << "!!! AutoDelegateSelector::SetWebOSNPUDelegate\n";
   return true;
 }
 
 bool AutoDelegateSelector::SetTfLiteGPUDelegate(std::unique_ptr<tflite::Interpreter> *interpreter, AccelerationPolicyManager *apm)
 {
+  PmLogContext ad_context;
+  PmLogGetContext("auto_delegation", &ad_context);
+
   auto policy = apm->GetPolicy();
   TfLiteGpuDelegateOptionsV2 gpu_opts = TfLiteGpuDelegateOptionsV2Default();
   if (policy == AccelerationPolicyManager::kMinimumLatency)
@@ -75,7 +80,7 @@ bool AutoDelegateSelector::SetTfLiteGPUDelegate(std::unique_ptr<tflite::Interpre
   auto *delegate = TfLiteGpuDelegateV2Create(&gpu_opts);
   if ((*interpreter)->ModifyGraphWithDelegate(delegate) != kTfLiteOk)
   {
-    std::cout << "!!! Error: something went wrong while setting TfLiteGPU Delegate\n";
+    PmLogError(ad_context, "ADS", 0, "Something went wrong while setting TfLiteGPU delegate");
     return false;
   }
 
@@ -206,9 +211,6 @@ bool AutoDelegateSelector::FillRandomInputTensor(std::unique_ptr<tflite::Interpr
     case kTfLiteInt8:
       (*interpreter)->typed_input_tensor<int8_t>(0)[i] = rand() % 256;
       break;
-    // case kTfLiteFloat16:
-    //   (*interpreter)->typed_input_tensor<half>(0)[i] = static_cast<Eigen::half>(rand()) / static_cast<float>(1.0);
-    //   break;
     case kTfLiteFloat64:
       (*interpreter)->typed_input_tensor<double>(0)[i] = static_cast<double>(rand()) / static_cast<float>(1.0);
       break;
