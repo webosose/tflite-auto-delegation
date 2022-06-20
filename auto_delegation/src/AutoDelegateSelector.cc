@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2022 LG Electronics Inc.
+ * SPDX-License-Identifier: LicenseRef-LGE-Proprietary
+ */
 #include "AutoDelegateSelector.h"
 
 AutoDelegateSelector::AutoDelegateSelector(tflite::ops::builtin::BuiltinOpResolver *resolver)
