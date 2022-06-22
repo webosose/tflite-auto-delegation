@@ -1,6 +1,15 @@
 cmake_minimum_required (VERSION 2.8.7)
 project (auto_delegation)
 
+set(AUTO_DELEGATION_VERSION_MAJOR 1)
+set(AUTO_DELEGATION_VERSION_MINOR 0)
+set(AUTO_DELEGATION_VERSION_PATCH 1)
+set(AUTO_DELEGATION_VERSION_LIST
+    "${AUTO_DELEGATION_VERSION_MAJOR}."
+    "${AUTO_DELEGATION_VERSION_MINOR}."
+    "${AUTO_DELEGATION_VERSION_PATCH}")
+string(REPLACE ";" "" AUTO_DELEGATION_VERSION ${AUTO_DELEGATION_VERSION_LIST})
+
 ###############################################################
 #####     PACKAGE SETTINGS                                #####
 ###############################################################
@@ -54,9 +63,17 @@ add_library(${LIB_NAME}
     ${SRC_FILES}
 )
 
+set_target_properties(${LIB_NAME} PROPERTIES
+    VERSION ${AUTO_DELEGATION_VERSION}
+    SOVERSION ${AUTO_DELEGATION_VERSION_MAJOR}
+)
+
 target_link_libraries(${LIB_NAME}
     ${TFLITE_LIBRARIES}
     ${RAPIDJSON_LIBRARIES}
     ${PMLOGLIB_LDFLAGS}
     pthread
 )
+
+install(TARGETS auto-delegation
+    DESTINATION ${CMAKE_INSTALL_LIBDIR})
