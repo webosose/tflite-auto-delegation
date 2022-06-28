@@ -36,12 +36,11 @@ link_directories(
 set(LIB_NAME auto-delegation)
 set(INC_DIR ${CMAKE_SOURCE_DIR}/include)
 set(SRC_DIR ${CMAKE_SOURCE_DIR}/auto_delegation/src)
+set(INSTALL_INC_DIR ${CMAKE_INSTALL_INCLUDEDIR}/aif/auto_delegation)
 
 # Header Files
 include_directories(
     ${INC_DIR}
-    ${SRC_DIR}
-    ${CMAKE_SOURCE_DIR}/auto_delegation
 )
 
 # Source Files
@@ -72,8 +71,8 @@ target_link_libraries(${LIB_NAME}
 )
 
 install(
-    DIRECTORY ${INC_DIR}
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/aif
+    FILES ${INC_DIR}/AccelerationPolicyManager.h ${INC_DIR}/AutoDelegateSelector.h
+    DESTINATION ${INSTALL_INC_DIR}
 )
 
 install(
