@@ -37,8 +37,6 @@ set(LIB_NAME auto-delegation)
 set(INC_DIR ${CMAKE_SOURCE_DIR}/include)
 set(SRC_DIR ${CMAKE_SOURCE_DIR}/auto_delegation/src)
 
-set(AIF_INC_DIR ${INC_DIR}/aif)
-
 # Header Files
 include_directories(
     ${INC_DIR}
@@ -74,7 +72,7 @@ target_link_libraries(${LIB_NAME}
 )
 
 install(
-    DIRECTORY ${AIF_INC_DIR}
+    DIRECTORY ${INC_DIR}
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/aif
 )
 
