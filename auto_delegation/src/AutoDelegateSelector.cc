@@ -107,13 +107,13 @@ bool AutoDelegateSelector::Preview(std::unique_ptr<tflite::Interpreter> *interpr
     auto registration = nodes[idx].second;
 
     auto op = static_cast<tflite::BuiltinOperator>(registration.builtin_code);
-    if (tflite::EnumNameBuiltinOperator(op) == "DELEGATE")
+    if (strcmp(tflite::EnumNameBuiltinOperator(op), "DELEGATE") == 0)
       num_partition++;
 
     std::cout << idx << " <" << tflite::EnumNameBuiltinOperator(op) << ">  ";
-    if (registration.custom_name != nullptr || node.delegate != nullptr)
+    if (registration.custom_name != nullptr)
       std::cout << registration.custom_name << "\n\n";
-    else
+    else if (node.delegate != nullptr)
       std::cout << "NO delegate or custom\n\n";
 
     auto inputs = node.inputs;
@@ -172,6 +172,9 @@ bool AutoDelegateSelector::Preview(std::unique_ptr<tflite::Interpreter> *interpr
   return true;
 }
 
+std::random_device rd;
+std::mt19937 gen(rd());
+
 bool AutoDelegateSelector::FillRandomInputTensor(std::unique_ptr<tflite::Interpreter> *interpreter)
 {
   tflite::Subgraph &subgraph = (*interpreter)->primary_subgraph();
@@ -195,34 +198,36 @@ bool AutoDelegateSelector::FillRandomInputTensor(std::unique_ptr<tflite::Interpr
 
   for (int i = 0; i < input_size; i++)
   {
+    std::uniform_int_distribution<> dist(0, 256);
+    int rand_pixel = dist(gen);
     switch (model_input_tensor_type)
     {
     case kTfLiteFloat32:
-      (*interpreter)->typed_input_tensor<float>(0)[i] = static_cast<float>(rand()) / static_cast<float>(1.0);
+      (*interpreter)->typed_input_tensor<float>(0)[i] = static_cast<float>(rand_pixel) / static_cast<float>(256);
       break;
     case kTfLiteInt32:
-      (*interpreter)->typed_input_tensor<int32_t>(0)[i] = rand() % 256;
+      (*interpreter)->typed_input_tensor<int32_t>(0)[i] = rand_pixel;
       break;
     case kTfLiteUInt8:
-      (*interpreter)->typed_input_tensor<uint8_t>(0)[i] = rand() % 256;
+      (*interpreter)->typed_input_tensor<uint8_t>(0)[i] = rand_pixel;
       break;
     case kTfLiteInt64:
-      (*interpreter)->typed_input_tensor<int64_t>(0)[i] = rand() % 256;
+      (*interpreter)->typed_input_tensor<int64_t>(0)[i] = rand_pixel;
       break;
     case kTfLiteInt16:
-      (*interpreter)->typed_input_tensor<int16_t>(0)[i] = rand() % 256;
+      (*interpreter)->typed_input_tensor<int16_t>(0)[i] = rand_pixel;
       break;
     case kTfLiteInt8:
-      (*interpreter)->typed_input_tensor<int8_t>(0)[i] = rand() % 256;
+      (*interpreter)->typed_input_tensor<int8_t>(0)[i] = rand_pixel;
       break;
     case kTfLiteFloat64:
-      (*interpreter)->typed_input_tensor<double>(0)[i] = static_cast<double>(rand()) / static_cast<float>(1.0);
+      (*interpreter)->typed_input_tensor<double>(0)[i] = static_cast<double>(rand_pixel) / static_cast<float>(256);
       break;
     case kTfLiteUInt64:
-      (*interpreter)->typed_input_tensor<uint64_t>(0)[i] = rand() % 256;
+      (*interpreter)->typed_input_tensor<uint64_t>(0)[i] = rand_pixel;
       break;
     case kTfLiteUInt32:
-      (*interpreter)->typed_input_tensor<uint32_t>(0)[i] = rand() % 256;
+      (*interpreter)->typed_input_tensor<uint32_t>(0)[i] = rand_pixel;
       break;
     default:
       break;

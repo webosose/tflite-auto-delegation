@@ -6,6 +6,8 @@
 #define AUTODELEGATESELECTOR_H_
 #include <iostream>
 #include <vector>
+#include <cstring>
+#include <random>
 
 #include <tensorflow/lite/interpreter.h>
 #include <tensorflow/lite/kernels/register.h>
