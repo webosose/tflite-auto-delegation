@@ -5,9 +5,8 @@ IF("${AIF_INSTALL_DIR}" STREQUAL "")
     set(AIF_INSTALL_DIR "/usr/share/aif")
 ENDIF()
 
-
 IF("${AIF_INSTALL_TEST_DIR}" STREQUAL "")
-    set(AIF_INSTALL_TEST_DIR "usr/share/aif/test")
+    set(AIF_INSTALL_TEST_DIR "${AIF_INSTALL_DIR}/test")
 ENDIF()
 
 ###############################################################
