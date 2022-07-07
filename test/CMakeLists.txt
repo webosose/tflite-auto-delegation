@@ -1,6 +1,15 @@
 cmake_minimum_required (VERSION 2.8.7)
 project (auto_delegation_test)
 
+IF("${AIF_INSTALL_DIR}" STREQUAL "")
+    set(AIF_INSTALL_DIR "/usr/share/aif")
+ENDIF()
+
+
+IF("${AIF_INSTALL_TEST_DIR}" STREQUAL "")
+    set(AIF_INSTALL_TEST_DIR "usr/share/aif/test")
+ENDIF()
+
 ###############################################################
 #####     PACKAGE SETTINGS                                #####
 ###############################################################
@@ -75,3 +84,5 @@ target_link_libraries(${EXE_NAME}
     ${GTEST_LIBRARIES}
     ${LIBS}
 )
+
+install(TARGETS ${EXE_NAME} DESTINATION ${AIF_INSTALL_TEST_DIR})

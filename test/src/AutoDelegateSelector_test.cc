@@ -29,7 +29,7 @@ protected:
 
     std::vector<std::string> model_paths{"/usr/share/aif/model/bodypix_mobilenet_v1_075_512_512_16_quant_decoder.tflite",
                                          "/usr/share/aif/model/deeplabv3_mnv2_dm05_pascal_quant.tflite",
-                                         "/usr/share/aif/model/face_detection_full_range.tflite",
+                                         "/usr/share/aif/model/yunet_120x160.tflite",
                                          "/usr/share/aif/model/face_detection_short_range.tflite",
                                          "/usr/share/aif/model/hand_landmark_lite.tflite",
                                          "/usr/share/aif/model/movenet_single_pose_thunder_ptq.tflite",
@@ -168,7 +168,7 @@ TEST_F(AutoDelegateSelectorTest, 02_03_selectDelegate_deeplab_MinimumLatency)
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
 
-TEST_F(AutoDelegateSelectorTest, 03_01_selectDelegate_fdfull_CPUOnly)
+TEST_F(AutoDelegateSelectorTest, 03_01_selectDelegate_yunet_CPUOnly)
 {
     std::string model_path = model_paths[2];
     std::unique_ptr<tflite::FlatBufferModel> model = tflite::FlatBufferModel::BuildFromFile(model_path.c_str());
@@ -189,7 +189,7 @@ TEST_F(AutoDelegateSelectorTest, 03_01_selectDelegate_fdfull_CPUOnly)
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
 
-TEST_F(AutoDelegateSelectorTest, 03_02_selectDelegate_fdfull_MaximumPrecision)
+TEST_F(AutoDelegateSelectorTest, 03_02_selectDelegate_yunet_MaximumPrecision)
 {
     std::string model_path = model_paths[2];
     std::unique_ptr<tflite::FlatBufferModel> model = tflite::FlatBufferModel::BuildFromFile(model_path.c_str());
@@ -210,7 +210,7 @@ TEST_F(AutoDelegateSelectorTest, 03_02_selectDelegate_fdfull_MaximumPrecision)
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
 
-TEST_F(AutoDelegateSelectorTest, 03_03_selectDelegate_fdfull_MinimumLatency)
+TEST_F(AutoDelegateSelectorTest, 03_03_selectDelegate_yunet_MinimumLatency)
 {
     std::string model_path = model_paths[2];
     std::unique_ptr<tflite::FlatBufferModel> model = tflite::FlatBufferModel::BuildFromFile(model_path.c_str());
