@@ -77,7 +77,7 @@ install(
 
 install(
     FILES ${CMAKE_SOURCE_DIR}/files/${LIB_NAME}.pc
-    DESTINATION lib/pkgconfig
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
 )
 
 install(TARGETS auto-delegation
