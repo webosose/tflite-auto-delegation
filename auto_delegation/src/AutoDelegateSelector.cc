@@ -19,6 +19,12 @@ bool AutoDelegateSelector::SelectDelegate(std::unique_ptr<tflite::Interpreter> *
   PmLogContext ad_context;
   PmLogGetContext("auto_delegation", &ad_context);
 
+  if (apm->GetPolicy() != AccelerationPolicyManager::kEnableLoadBalancing && apm->GetCPUFallbackPercentage() != 0)
+  {
+    PmLogInfo(ad_context, "ADS", 0, "current policy is not EnableLoadBalancing but non-zero value"
+                                    "is set to cpu fallback percentage. So, the value set for cpu fallback percentage is ignored.");
+  }
+
   tflite::Subgraph &subgraph = (*interpreter)->primary_subgraph();
 
   auto plan = subgraph.execution_plan();
@@ -77,12 +83,6 @@ bool AutoDelegateSelector::SetTfLiteGPUDelegate(std::unique_ptr<tflite::Interpre
     gpu_opts.inference_priority1 = TfLiteGpuInferencePriority::TFLITE_GPU_INFERENCE_PRIORITY_MIN_MEMORY_USAGE;
     gpu_opts.inference_priority2 = TfLiteGpuInferencePriority::TFLITE_GPU_INFERENCE_PRIORITY_AUTO;
     gpu_opts.inference_priority3 = TfLiteGpuInferencePriority::TFLITE_GPU_INFERENCE_PRIORITY_AUTO;
-  }
-
-  if (policy != AccelerationPolicyManager::kEnableLoadBalancing && apm->GetCPUFallbackPercentage() != 0)
-  {
-    PmLogInfo(ad_context, "ADS", 0, "current policy is not EnableLoadBalancing but non-zero value"
-                                    "is set to cpu fallback percentage. So, the value set for cpu fallback percentage is ignored.");
   }
 
   gpu_opts.experimental_flags |= TFLITE_GPU_EXPERIMENTAL_FLAGS_ENABLE_QUANT;
