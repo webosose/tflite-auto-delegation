@@ -100,4 +100,3 @@ AccelerationPolicyManager::Policy AccelerationPolicyManager::stringToPolicy(std:
 
     return policy;
 }
-
