@@ -73,7 +73,6 @@ bool AccelerationPolicyManager::SetCPUFallbackPercentage(int percentage)
     else if (percentage > 100)
         percentage = 100;
 
-    this->SetPolicy(kEnableLoadBalancing);
     cpu_fallback_percentage_ = percentage;
 
     PmLogInfo(ad_context, "APM", 0, "Set CPU Fallback Percentage: %d", cpu_fallback_percentage_);
@@ -101,3 +100,4 @@ AccelerationPolicyManager::Policy AccelerationPolicyManager::stringToPolicy(std:
 
     return policy;
 }
+

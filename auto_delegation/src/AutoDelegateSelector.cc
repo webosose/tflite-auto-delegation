@@ -79,6 +79,11 @@ bool AutoDelegateSelector::SetTfLiteGPUDelegate(std::unique_ptr<tflite::Interpre
     gpu_opts.inference_priority3 = TfLiteGpuInferencePriority::TFLITE_GPU_INFERENCE_PRIORITY_AUTO;
   }
 
+  if(policy != AccelerationPolicyManager::kEnableLoadBalancing && apm->GetCPUFallbackPercentage() != 0){
+	PmLogInfo(ad_context, "ADS", 0, "current policy is not EnableLoadBalancing but non-zero value"
+	"is set to cpu fallback percentage. So, the value set for cpu fallback percentage is ignored.");
+  }
+
   gpu_opts.experimental_flags |= TFLITE_GPU_EXPERIMENTAL_FLAGS_ENABLE_QUANT;
 
   auto *delegate = TfLiteGpuDelegateV2Create(&gpu_opts);
@@ -235,3 +240,4 @@ bool AutoDelegateSelector::FillRandomInputTensor(std::unique_ptr<tflite::Interpr
   }
   return true;
 }
+
