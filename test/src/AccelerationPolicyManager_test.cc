@@ -118,28 +118,15 @@ TEST_F(AccelerationPolicyManagerTest, 05_01_set_and_get_LOAD_BALANCING_policy)
     EXPECT_EQ(apm.GetPolicy(), APM::kEnableLoadBalancing);
 }
 
-TEST_F(AccelerationPolicyManagerTest, 05_02_set_and_get_LOAD_BALANCING_policy)
-{
-    APM apm;
-
-    EXPECT_EQ(apm.GetCPUFallbackPercentage(), 0);
-
-    EXPECT_TRUE(apm.SetCPUFallbackPercentage(25));
-    EXPECT_EQ(apm.GetCPUFallbackPercentage(), 25);
-    EXPECT_EQ(apm.GetPolicy(), APM::kEnableLoadBalancing);
-}
-
 TEST_F(AccelerationPolicyManagerTest, 06_set_and_get_cpu_fallback_percentage)
 {
     APM apm;
 
-    EXPECT_TRUE(apm.SetPolicy(APM::kMaximumPrecision));
-    EXPECT_EQ(apm.GetPolicy(), APM::kMaximumPrecision);
+    EXPECT_TRUE(apm.SetPolicy(APM::kEnableLoadBalancing));
+    EXPECT_EQ(apm.GetPolicy(), APM::kEnableLoadBalancing);
 
     EXPECT_TRUE(apm.SetCPUFallbackPercentage(25));
     EXPECT_EQ(apm.GetCPUFallbackPercentage(), 25);
-
-    EXPECT_EQ(apm.GetPolicy(), APM::kEnableLoadBalancing);
 
     EXPECT_TRUE(apm.SetCPUFallbackPercentage(120));
     EXPECT_EQ(apm.GetCPUFallbackPercentage(), 100);
