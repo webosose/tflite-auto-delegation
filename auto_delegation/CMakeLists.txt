@@ -47,6 +47,7 @@ include_directories(
 set(SRC_FILES
     ${SRC_DIR}/AutoDelegateSelector.cc
     ${SRC_DIR}/AccelerationPolicyManager.cc
+    ${SRC_DIR}/util.cc
 )
 
 add_library(${LIB_NAME}

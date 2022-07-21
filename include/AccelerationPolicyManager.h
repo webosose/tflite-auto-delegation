@@ -7,7 +7,7 @@
 #include <vector>
 #include <string>
 #include "rapidjson/document.h"
-#include <PmLogLib.h>
+#include "util.h"
 
 class AccelerationPolicyManager
 {
