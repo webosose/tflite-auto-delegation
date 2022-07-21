@@ -72,7 +72,7 @@ target_link_libraries(${LIB_NAME}
 )
 
 install(
-    FILES ${INC_DIR}/AccelerationPolicyManager.h ${INC_DIR}/AutoDelegateSelector.h
+    FILES ${INC_DIR}/AccelerationPolicyManager.h ${INC_DIR}/AutoDelegateSelector.h ${INC_DIR}/util.h
     DESTINATION ${INSTALL_INC_DIR}
 )
 
