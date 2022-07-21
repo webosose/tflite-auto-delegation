@@ -32,21 +32,24 @@ AccelerationPolicyManager::~AccelerationPolicyManager()
 
 bool AccelerationPolicyManager::SetPolicy(AccelerationPolicyManager::Policy policy)
 {
+    PmLogContext ad_context = nullptr;
+    PmLogGetContext("auto_delegation", &ad_context);
+
     policy_ = policy;
 
     switch (policy_)
     {
     case kCPUOnly:
-        PmLogInfo(getPmLogContext(), "APM", 0, "Set Acceleration Policy: CPU Only");
+        PmLogInfo(ad_context, "APM", 0, "Set Acceleration Policy: CPU Only");
         break;
     case kMaximumPrecision:
-        PmLogInfo(getPmLogContext(), "APM", 0, "Set Acceleration Policy: Maximum Precision");
+        PmLogInfo(ad_context, "APM", 0, "Set Acceleration Policy: Maximum Precision");
         break;
     case kMinimumLatency:
-        PmLogInfo(getPmLogContext(), "APM", 0, "Set Acceleration Policy: Minimum Latency");
+        PmLogInfo(ad_context, "APM", 0, "Set Acceleration Policy: Minimum Latency");
         break;
     case kEnableLoadBalancing:
-        PmLogInfo(getPmLogContext(), "APM", 0, "Set Acceleration Policy: Enable Load Balancing");
+        PmLogInfo(ad_context, "APM", 0, "Set Acceleration Policy: Enable Load Balancing");
         break;
     default:
         break;
@@ -62,6 +65,9 @@ AccelerationPolicyManager::Policy AccelerationPolicyManager::GetPolicy()
 
 bool AccelerationPolicyManager::SetCPUFallbackPercentage(int percentage)
 {
+    PmLogContext ad_context = nullptr;
+    PmLogGetContext("auto_delegation", &ad_context);
+
     if (percentage < 0)
         percentage = 0;
     else if (percentage > 100)
@@ -69,7 +75,7 @@ bool AccelerationPolicyManager::SetCPUFallbackPercentage(int percentage)
 
     cpu_fallback_percentage_ = percentage;
 
-    PmLogInfo(getPmLogContext(), "APM", 0, "Set CPU Fallback Percentage: %d", cpu_fallback_percentage_);
+    PmLogInfo(ad_context, "APM", 0, "Set CPU Fallback Percentage: %d", cpu_fallback_percentage_);
 
     return true;
 }
