@@ -10,6 +10,8 @@
 #include <customOp/posenet_decoder_op.h>
 #include <customOp/posenet_decoder.h>
 
+using namespace aif;
+
 typedef AutoDelegateSelector ADS;
 typedef AccelerationPolicyManager APM;
 

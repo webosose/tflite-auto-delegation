@@ -3,6 +3,16 @@
  * SPDX-License-Identifier: LicenseRef-LGE-Proprietary
  */
 #include "AutoDelegateSelector.h"
+#include "tools/Utils.h"
+
+namespace
+{
+
+static PmLogContext s_pmlogCtx = aif::getADPmLogContext();
+
+} // end of anonymous namespace
+
+namespace aif {
 
 AutoDelegateSelector::AutoDelegateSelector(tflite::ops::builtin::BuiltinOpResolver *resolver)
     : resolver_(resolver)
@@ -16,12 +26,9 @@ AutoDelegateSelector::~AutoDelegateSelector()
 
 bool AutoDelegateSelector::SelectDelegate(std::unique_ptr<tflite::Interpreter> *interpreter, AccelerationPolicyManager *apm)
 {
-  PmLogContext ad_context = nullptr;
-  PmLogGetContext("auto_delegation", &ad_context);
-
   if (apm->GetPolicy() != AccelerationPolicyManager::kEnableLoadBalancing && apm->GetCPUFallbackPercentage() != 0)
   {
-    PmLogInfo(ad_context, "ADS", 0, "current policy is not EnableLoadBalancing but non-zero value"
+    PmLogInfo(s_pmlogCtx, "ADS", 0, "current policy is not EnableLoadBalancing but non-zero value"
                                     "is set to cpu fallback percentage. So, the value set for cpu fallback percentage is ignored.");
   }
 
@@ -46,7 +53,7 @@ bool AutoDelegateSelector::SelectDelegate(std::unique_ptr<tflite::Interpreter> *
         }
         else
         {
-          PmLogError(ad_context, "ADS", 0, "Something went wrong while setting webOSNPU delegate");
+          PmLogError(s_pmlogCtx, "ADS", 0, "Something went wrong while setting webOSNPU delegate");
           return false;
         }
       }
@@ -66,9 +73,6 @@ bool AutoDelegateSelector::SetWebOSNPUDelegate(std::unique_ptr<tflite::Interpret
 
 bool AutoDelegateSelector::SetTfLiteGPUDelegate(std::unique_ptr<tflite::Interpreter> *interpreter, AccelerationPolicyManager *apm)
 {
-  PmLogContext ad_context = nullptr;
-  PmLogGetContext("auto_delegation", &ad_context);
-
   auto policy = apm->GetPolicy();
   TfLiteGpuDelegateOptionsV2 gpu_opts = TfLiteGpuDelegateOptionsV2Default();
   if (policy == AccelerationPolicyManager::kMinimumLatency)
@@ -90,7 +94,7 @@ bool AutoDelegateSelector::SetTfLiteGPUDelegate(std::unique_ptr<tflite::Interpre
   auto *delegate = TfLiteGpuDelegateV2Create(&gpu_opts);
   if ((*interpreter)->ModifyGraphWithDelegate(delegate) != kTfLiteOk)
   {
-    PmLogError(ad_context, "ADS", 0, "Something went wrong while setting TfLiteGPU delegate");
+    PmLogError(s_pmlogCtx, "ADS", 0, "Something went wrong while setting TfLiteGPU delegate");
     return false;
   }
 
@@ -241,3 +245,5 @@ bool AutoDelegateSelector::FillRandomInputTensor(std::unique_ptr<tflite::Interpr
   }
   return true;
 }
+
+} // end of namespace aif

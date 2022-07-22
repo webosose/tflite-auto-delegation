@@ -47,6 +47,7 @@ include_directories(
 set(SRC_FILES
     ${SRC_DIR}/AutoDelegateSelector.cc
     ${SRC_DIR}/AccelerationPolicyManager.cc
+    ${SRC_DIR}/tools/Utils.cc
 )
 
 add_library(${LIB_NAME}
@@ -71,7 +72,7 @@ target_link_libraries(${LIB_NAME}
 )
 
 install(
-    FILES ${INC_DIR}/AccelerationPolicyManager.h ${INC_DIR}/AutoDelegateSelector.h
+    DIRECTORY ${INC_DIR}
     DESTINATION ${INSTALL_INC_DIR}
 )
 

@@ -47,20 +47,15 @@ add_definitions(
 ########################################################
 set(EXE_NAME auto_delegation_test)
 set(INC_DIR ${CMAKE_SOURCE_DIR}/include)
-set(AD_SRC_DIR ${CMAKE_SOURCE_DIR}/auto_delegation/src)
 set(TEST_INC_DIR ${CMAKE_SOURCE_DIR}/test/include)
 set(SRC_DIR ${CMAKE_SOURCE_DIR}/test/src)
 
 # include directories
 include_directories("${INC_DIR}")
 include_directories("${TEST_INC_DIR}")
-include_directories("${SRC_DIR}")
-include_directories("${CMAKE_SOURCE_DIR}/test")
 
 # Source Files
 set(SRC_FILES
-    ${AD_SRC_DIR}/AccelerationPolicyManager.cc
-    ${AD_SRC_DIR}/AutoDelegateSelector.cc
     ${SRC_DIR}/AccelerationPolicyManager_test.cc
     ${SRC_DIR}/AutoDelegateSelector_test.cc
     ${SRC_DIR}/customOp/posenet_decoder_op.cc
@@ -73,6 +68,7 @@ set(LIBS
     ${RAPIDJSON_LIBRARIES}
     ${PMLOGLIB_LDFLAGS}
     pthread
+    auto-delegation
 )
 
 add_executable(${EXE_NAME}

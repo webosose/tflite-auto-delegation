@@ -7,7 +7,8 @@
 #include <vector>
 #include <string>
 #include "rapidjson/document.h"
-#include <PmLogLib.h>
+
+namespace aif {
 
 class AccelerationPolicyManager
 {
@@ -36,5 +37,7 @@ private:
     Policy policy_ = kCPUOnly;
     int cpu_fallback_percentage_ = 0;
 };
+
+} // end of namespace aif
 
 #endif

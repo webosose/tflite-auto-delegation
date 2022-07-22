@@ -5,6 +5,8 @@
 #include <gtest/gtest.h>
 #include <AccelerationPolicyManager.h>
 
+using namespace aif;
+
 typedef AccelerationPolicyManager APM;
 
 class AccelerationPolicyManagerTest : public ::testing::Test

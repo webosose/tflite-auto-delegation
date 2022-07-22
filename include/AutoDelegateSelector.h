@@ -15,7 +15,8 @@
 #include <tensorflow/lite/delegates/gpu/delegate.h>
 
 #include "AccelerationPolicyManager.h"
-#include <PmLogLib.h>
+
+namespace aif {
 
 class AutoDelegateSelector
 {
@@ -35,5 +36,7 @@ private:
 
     tflite::ops::builtin::BuiltinOpResolver *resolver_;
 };
+
+} // end of namespace aif
 
 #endif
