@@ -48,6 +48,7 @@ set(SRC_FILES
     ${SRC_DIR}/AutoDelegateSelector.cc
     ${SRC_DIR}/AccelerationPolicyManager.cc
     ${SRC_DIR}/tools/Utils.cc
+    ${SRC_DIR}/tools/GraphTester.cc
 )
 
 add_library(${LIB_NAME}
