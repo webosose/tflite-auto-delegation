@@ -7,7 +7,6 @@
 #include <iostream>
 #include <vector>
 #include <cstring>
-#include <random>
 
 #include <tensorflow/lite/interpreter.h>
 #include <tensorflow/lite/kernels/register.h>
@@ -26,9 +25,6 @@ public:
     virtual ~AutoDelegateSelector();
 
     bool SelectDelegate(std::unique_ptr<tflite::Interpreter> *interpreter, AccelerationPolicyManager *apm);
-
-    bool Preview(std::unique_ptr<tflite::Interpreter> *interpreter);
-    bool FillRandomInputTensor(std::unique_ptr<tflite::Interpreter> *interpreter);
 
 private:
     bool SetWebOSNPUDelegate(std::unique_ptr<tflite::Interpreter> *interpreter, AccelerationPolicyManager *apm);
