@@ -4,7 +4,6 @@
  */
 #include <gtest/gtest.h>
 #include <AutoDelegateSelector.h>
-#include <tools/GraphTester.h>
 
 // custom ops
 #include <customOp/transpose_conv_bias.h>
@@ -48,16 +47,13 @@ TEST_F(AutoDelegateSelectorTest, 01_01_selectDelegate_yunet_CPUOnly)
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
-    APM apm;
-    EXPECT_TRUE(apm.SetPolicy(APM::kCPUOnly));
+    AccelerationPolicyManager apm;
+    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kCPUOnly));
 
     EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
-
-    GraphTester graphTester(&interpreter);
-    EXPECT_TRUE(graphTester.FillRandomInputTensor());
-
+    EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
 
@@ -72,16 +68,13 @@ TEST_F(AutoDelegateSelectorTest, 01_02_selectDelegate_yunet_MaximumPrecision)
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
-    APM apm;
-    EXPECT_TRUE(apm.SetPolicy(APM::kMaximumPrecision));
+    AccelerationPolicyManager apm;
+    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kMaximumPrecision));
 
     EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
-
-    GraphTester graphTester(&interpreter);
-    EXPECT_TRUE(graphTester.FillRandomInputTensor());
-
+    EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
 
@@ -96,16 +89,13 @@ TEST_F(AutoDelegateSelectorTest, 01_03_selectDelegate_yunet_MinimumLatency)
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
-    APM apm;
-    EXPECT_TRUE(apm.SetPolicy(APM::kMinimumLatency));
+    AccelerationPolicyManager apm;
+    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kMinimumLatency));
 
     EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
-
-    GraphTester graphTester(&interpreter);
-    EXPECT_TRUE(graphTester.FillRandomInputTensor());
-
+    EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
 
@@ -120,17 +110,14 @@ TEST_F(AutoDelegateSelectorTest, 01_04_selectDelegate_yunet_EnableLoadBalancing)
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
-    APM apm;
-    EXPECT_TRUE(apm.SetPolicy(APM::kEnableLoadBalancing));
+    AccelerationPolicyManager apm;
+    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kEnableLoadBalancing));
     EXPECT_TRUE(apm.SetCPUFallbackPercentage(25));
 
     EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
-
-    GraphTester graphTester(&interpreter);
-    EXPECT_TRUE(graphTester.FillRandomInputTensor());
-
+    EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
 
@@ -157,10 +144,7 @@ TEST_F(AutoDelegateSelectorTest, 01_05_selectDelegate_yunet_EnableLoadBalancing)
     EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
-
-    GraphTester graphTester(&interpreter);
-    EXPECT_TRUE(graphTester.FillRandomInputTensor());
-
+    EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
 
@@ -175,16 +159,13 @@ TEST_F(AutoDelegateSelectorTest, 02_01_selectDelegate_fdshort_CPUOnly)
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
-    APM apm;
-    EXPECT_TRUE(apm.SetPolicy(APM::kCPUOnly));
+    AccelerationPolicyManager apm;
+    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kCPUOnly));
 
     EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
-
-    GraphTester graphTester(&interpreter);
-    EXPECT_TRUE(graphTester.FillRandomInputTensor());
-
+    EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
 
@@ -199,16 +180,13 @@ TEST_F(AutoDelegateSelectorTest, 02_02_selectDelegate_fdshort_MaximumPrecision)
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
-    APM apm;
-    EXPECT_TRUE(apm.SetPolicy(APM::kMaximumPrecision));
+    AccelerationPolicyManager apm;
+    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kMaximumPrecision));
 
     EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
-
-    GraphTester graphTester(&interpreter);
-    EXPECT_TRUE(graphTester.FillRandomInputTensor());
-
+    EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
 
@@ -223,16 +201,13 @@ TEST_F(AutoDelegateSelectorTest, 02_03_selectDelegate_fdshort_MinimumLatency)
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
-    APM apm;
-    EXPECT_TRUE(apm.SetPolicy(APM::kMinimumLatency));
+    AccelerationPolicyManager apm;
+    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kMinimumLatency));
 
     EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
-
-    GraphTester graphTester(&interpreter);
-    EXPECT_TRUE(graphTester.FillRandomInputTensor());
-
+    EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
 
@@ -247,17 +222,14 @@ TEST_F(AutoDelegateSelectorTest, 02_04_selectDelegate_fdshort_EnableLoadBalancin
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
-    APM apm;
-    EXPECT_TRUE(apm.SetPolicy(APM::kEnableLoadBalancing));
+    AccelerationPolicyManager apm;
+    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kEnableLoadBalancing));
     EXPECT_TRUE(apm.SetCPUFallbackPercentage(15));
 
     EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
-
-    GraphTester graphTester(&interpreter);
-    EXPECT_TRUE(graphTester.FillRandomInputTensor());
-
+    EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
 
@@ -284,10 +256,7 @@ TEST_F(AutoDelegateSelectorTest, 02_05_selectDelegate_fdshort_EnableLoadBalancin
     EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
-
-    GraphTester graphTester(&interpreter);
-    EXPECT_TRUE(graphTester.FillRandomInputTensor());
-
+    EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
 
@@ -303,16 +272,13 @@ TEST_F(AutoDelegateSelectorTest, 03_01_selectDelegate_posenet_CPUOnly)
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
-    APM apm;
-    EXPECT_TRUE(apm.SetPolicy(APM::kCPUOnly));
+    AccelerationPolicyManager apm;
+    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kCPUOnly));
 
     EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
-
-    GraphTester graphTester(&interpreter);
-    EXPECT_TRUE(graphTester.FillRandomInputTensor());
-
+    EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
 
@@ -328,16 +294,13 @@ TEST_F(AutoDelegateSelectorTest, 03_02_selectDelegate_posenet_MaximumPrecision)
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
-    APM apm;
-    EXPECT_TRUE(apm.SetPolicy(APM::kMaximumPrecision));
+    AccelerationPolicyManager apm;
+    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kMaximumPrecision));
 
     EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
-
-    GraphTester graphTester(&interpreter);
-    EXPECT_TRUE(graphTester.FillRandomInputTensor());
-
+    EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
 
@@ -353,16 +316,13 @@ TEST_F(AutoDelegateSelectorTest, 03_03_selectDelegate_posenet_MinimumLatency)
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
-    APM apm;
-    EXPECT_TRUE(apm.SetPolicy(APM::kMinimumLatency));
+    AccelerationPolicyManager apm;
+    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kMinimumLatency));
 
     EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
-
-    GraphTester graphTester(&interpreter);
-    EXPECT_TRUE(graphTester.FillRandomInputTensor());
-
+    EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
 
@@ -378,17 +338,14 @@ TEST_F(AutoDelegateSelectorTest, 03_04_selectDelegate_posenet_EnableLoadBalancin
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
-    APM apm;
-    EXPECT_TRUE(apm.SetPolicy(APM::kEnableLoadBalancing));
+    AccelerationPolicyManager apm;
+    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kEnableLoadBalancing));
     EXPECT_TRUE(apm.SetCPUFallbackPercentage(25));
 
     EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
-
-    GraphTester graphTester(&interpreter);
-    EXPECT_TRUE(graphTester.FillRandomInputTensor());
-
+    EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
 
@@ -416,10 +373,7 @@ TEST_F(AutoDelegateSelectorTest, 03_05_selectDelegate_posenet_EnableLoadBalancin
     EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
-
-    GraphTester graphTester(&interpreter);
-    EXPECT_TRUE(graphTester.FillRandomInputTensor());
-
+    EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
 
@@ -435,16 +389,13 @@ TEST_F(AutoDelegateSelectorTest, 04_01_selectDelegate_selfiesegmentation_CPUOnly
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
-    APM apm;
-    EXPECT_TRUE(apm.SetPolicy(APM::kCPUOnly));
+    AccelerationPolicyManager apm;
+    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kCPUOnly));
 
     EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
-
-    GraphTester graphTester(&interpreter);
-    EXPECT_TRUE(graphTester.FillRandomInputTensor());
-
+    EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
 
@@ -460,16 +411,13 @@ TEST_F(AutoDelegateSelectorTest, 04_02_selectDelegate_selfiesegmentation_Maximum
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
-    APM apm;
-    EXPECT_TRUE(apm.SetPolicy(APM::kMaximumPrecision));
+    AccelerationPolicyManager apm;
+    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kMaximumPrecision));
 
     EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
-
-    GraphTester graphTester(&interpreter);
-    EXPECT_TRUE(graphTester.FillRandomInputTensor());
-
+    EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
 
@@ -485,16 +433,13 @@ TEST_F(AutoDelegateSelectorTest, 04_03_selectDelegate_selfiesegmentation_Minimum
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
-    APM apm;
-    EXPECT_TRUE(apm.SetPolicy(APM::kMinimumLatency));
+    AccelerationPolicyManager apm;
+    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kMinimumLatency));
 
     EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
-
-    GraphTester graphTester(&interpreter);
-    EXPECT_TRUE(graphTester.FillRandomInputTensor());
-
+    EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
 
@@ -510,17 +455,14 @@ TEST_F(AutoDelegateSelectorTest, 04_04_selectDelegate_selfiesegmentation_EnableL
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
-    APM apm;
-    EXPECT_TRUE(apm.SetPolicy(APM::kEnableLoadBalancing));
+    AccelerationPolicyManager apm;
+    EXPECT_TRUE(apm.SetPolicy(AccelerationPolicyManager::kEnableLoadBalancing));
     EXPECT_TRUE(apm.SetCPUFallbackPercentage(10));
 
     EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
-
-    GraphTester graphTester(&interpreter);
-    EXPECT_TRUE(graphTester.FillRandomInputTensor());
-
+    EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
 
@@ -548,9 +490,6 @@ TEST_F(AutoDelegateSelectorTest, 04_05_selectDelegate_selfiesegmentation_EnableL
     EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
-
-    GraphTester graphTester(&interpreter);
-    EXPECT_TRUE(graphTester.FillRandomInputTensor());
-
+    EXPECT_TRUE(ads.FillRandomInputTensor(&interpreter));
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }

@@ -58,7 +58,6 @@ include_directories("${TEST_INC_DIR}")
 set(SRC_FILES
     ${SRC_DIR}/AccelerationPolicyManager_test.cc
     ${SRC_DIR}/AutoDelegateSelector_test.cc
-    ${SRC_DIR}/GraphTester_test.cc
     ${SRC_DIR}/customOp/posenet_decoder_op.cc
     ${SRC_DIR}/customOp/posenet_decoder.cc
     ${SRC_DIR}/customOp/transpose_conv_bias.cc
