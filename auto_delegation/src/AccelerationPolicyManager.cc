@@ -58,6 +58,9 @@ bool AccelerationPolicyManager::SetPolicy(AccelerationPolicyManager::Policy poli
     case kEnableLoadBalancing:
         PmLogInfo(s_pmlogCtx, "APM", 0, "Set Acceleration Policy: Enable Load Balancing");
         break;
+    case kPytorchModelGPU:
+        PmLogInfo(s_pmlogCtx, "APM", 0, "Set Acceleration Policy: PyTorch Model GPU");
+        break;
     default:
         break;
     }
@@ -101,6 +104,8 @@ AccelerationPolicyManager::Policy AccelerationPolicyManager::stringToPolicy(std:
         policy = AccelerationPolicyManager::Policy::kMinimumLatency;
     else if (policyStr.compare("LOAD_BALANCING") == 0)
         policy = AccelerationPolicyManager::Policy::kEnableLoadBalancing;
+    else if (policyStr.compare("PYTORCH_MODEL_GPU") == 0)
+        policy = AccelerationPolicyManager::Policy::kPytorchModelGPU;
 
     return policy;
 }

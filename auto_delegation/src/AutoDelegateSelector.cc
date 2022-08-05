@@ -88,8 +88,14 @@ bool AutoDelegateSelector::SetTfLiteGPUDelegate(std::unique_ptr<tflite::Interpre
     gpu_opts.inference_priority2 = TfLiteGpuInferencePriority::TFLITE_GPU_INFERENCE_PRIORITY_AUTO;
     gpu_opts.inference_priority3 = TfLiteGpuInferencePriority::TFLITE_GPU_INFERENCE_PRIORITY_AUTO;
   }
-
-  gpu_opts.experimental_flags |= TFLITE_GPU_EXPERIMENTAL_FLAGS_ENABLE_QUANT;
+  else if (policy == AccelerationPolicyManager::kPytorchModelGPU)
+  {
+    gpu_opts.cpu_fallback_percentage = apm->GetCPUFallbackPercentage();
+    gpu_opts.is_pytorch_converted_model = true;
+    gpu_opts.inference_priority1 = TfLiteGpuInferencePriority::TFLITE_GPU_INFERENCE_PRIORITY_MIN_MEMORY_USAGE;
+    gpu_opts.inference_priority2 = TfLiteGpuInferencePriority::TFLITE_GPU_INFERENCE_PRIORITY_AUTO;
+    gpu_opts.inference_priority3 = TfLiteGpuInferencePriority::TFLITE_GPU_INFERENCE_PRIORITY_AUTO;
+  }
 
   auto *delegate = TfLiteGpuDelegateV2Create(&gpu_opts);
   if ((*interpreter)->ModifyGraphWithDelegate(delegate) != kTfLiteOk)

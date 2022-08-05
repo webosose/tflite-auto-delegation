@@ -19,6 +19,7 @@ public:
         kMaximumPrecision,
         kMinimumLatency,
         kEnableLoadBalancing,
+        kPytorchModelGPU,
     };
 
     AccelerationPolicyManager();
