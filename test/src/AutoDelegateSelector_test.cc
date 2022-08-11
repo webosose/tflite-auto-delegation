@@ -31,10 +31,10 @@ protected:
     }
 
     std::vector<std::string> model_paths{
-        "/usr/share/aif/model/face_yunet.tflite",
-        "/usr/share/aif/model/face_detection_short_range.tflite",
-        "/usr/share/aif/model/posenet_mobilenet_v1_075_353_481_quant_decoder.tflite",
-        "/usr/share/aif/model/selfie_segmentation.tflite"};
+        std::string(AIF_INSTALL_DIR) + std::string("/model/face_yunet.tflite"),
+        std::string(AIF_INSTALL_DIR) + std::string("/model/face_detection_short_range.tflite"),
+        std::string(AIF_INSTALL_DIR) + std::string("/model/posenet_mobilenet_v1_075_353_481_quant_decoder.tflite"),
+        std::string(AIF_INSTALL_DIR) + std::string("/model/selfie_segmentation.tflite")};
 };
 
 TEST_F(AutoDelegateSelectorTest, 01_01_selectDelegate_yunet_CPUOnly)
@@ -61,6 +61,7 @@ TEST_F(AutoDelegateSelectorTest, 01_01_selectDelegate_yunet_CPUOnly)
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
 
+#ifndef USE_HOST_TEST
 TEST_F(AutoDelegateSelectorTest, 01_02_selectDelegate_yunet_MaximumPrecision)
 {
     std::string model_path = model_paths[0];
@@ -163,6 +164,7 @@ TEST_F(AutoDelegateSelectorTest, 01_05_selectDelegate_yunet_EnableLoadBalancing)
 
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
+#endif
 
 TEST_F(AutoDelegateSelectorTest, 02_01_selectDelegate_fdshort_CPUOnly)
 {
@@ -188,6 +190,7 @@ TEST_F(AutoDelegateSelectorTest, 02_01_selectDelegate_fdshort_CPUOnly)
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
 
+#ifndef USE_HOST_TEST
 TEST_F(AutoDelegateSelectorTest, 02_02_selectDelegate_fdshort_MaximumPrecision)
 {
     std::string model_path = model_paths[1];
@@ -290,6 +293,7 @@ TEST_F(AutoDelegateSelectorTest, 02_05_selectDelegate_fdshort_EnableLoadBalancin
 
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
+#endif
 
 TEST_F(AutoDelegateSelectorTest, 03_01_selectDelegate_posenet_CPUOnly)
 {
@@ -316,6 +320,7 @@ TEST_F(AutoDelegateSelectorTest, 03_01_selectDelegate_posenet_CPUOnly)
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
 
+#ifndef USE_HOST_TEST
 TEST_F(AutoDelegateSelectorTest, 03_02_selectDelegate_posenet_MaximumPrecision)
 {
     std::string model_path = model_paths[2];
@@ -422,6 +427,7 @@ TEST_F(AutoDelegateSelectorTest, 03_05_selectDelegate_posenet_EnableLoadBalancin
 
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
+#endif
 
 TEST_F(AutoDelegateSelectorTest, 04_01_selectDelegate_selfiesegmentation_CPUOnly)
 {
@@ -448,6 +454,7 @@ TEST_F(AutoDelegateSelectorTest, 04_01_selectDelegate_selfiesegmentation_CPUOnly
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
 
+#ifndef USE_HOST_TEST
 TEST_F(AutoDelegateSelectorTest, 04_02_selectDelegate_selfiesegmentation_MaximumPrecision)
 {
     std::string model_path = model_paths[3];
@@ -554,3 +561,4 @@ TEST_F(AutoDelegateSelectorTest, 04_05_selectDelegate_selfiesegmentation_EnableL
 
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
+#endif

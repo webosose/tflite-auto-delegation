@@ -40,6 +40,7 @@ link_directories(
 ###############################################################
 add_definitions(
     -std=c++14
+    -DAIF_INSTALL_DIR="${AIF_INSTALL_DIR}"
 )
 
 ########################################################
@@ -78,7 +79,20 @@ add_executable(${EXE_NAME}
 
 target_link_libraries(${EXE_NAME}
     ${GTEST_LIBRARIES}
+    ${GTEST_MAIN_LIBRARIES}
     ${LIBS}
 )
+
+
+IF(WITH_HOST_TEST)
+    ADD_DEFINITIONS(-DUSE_HOST_TEST)
+
+    file(MAKE_DIRECTORY ${AIF_INSTALL_DIR})                ### AIF_INSTALL_DIR == ${CMAKE_BINARY_DIR}/test/tmp
+    file(COPY ${CMAKE_SOURCE_DIR}/model DESTINATION ${AIF_INSTALL_DIR})
+
+    include(GoogleTest)
+    gtest_add_tests(${EXE_NAME} "" AUTO)
+ENDIF(WITH_HOST_TEST)
+
 
 install(TARGETS ${EXE_NAME} DESTINATION ${AIF_INSTALL_TEST_DIR})
