@@ -13,26 +13,32 @@
 #include <tensorflow/lite/model.h>
 #include <tensorflow/lite/delegates/gpu/delegate.h>
 
+#ifdef USE_EDGETPU
+#include <edgetpu.h>
+#endif
+
 #include "AccelerationPolicyManager.h"
 
-namespace aif {
-
-class AutoDelegateSelector
+namespace aif
 {
-public:
-    AutoDelegateSelector(tflite::ops::builtin::BuiltinOpResolver *resolver);
+    class AutoDelegateSelector
+    {
+    public:
+        AutoDelegateSelector(tflite::ops::builtin::BuiltinOpResolver *resolver);
+        virtual ~AutoDelegateSelector();
+        bool SelectDelegate(std::unique_ptr<tflite::Interpreter> *interpreter, AccelerationPolicyManager *apm);
 
-    virtual ~AutoDelegateSelector();
+    private:
+        bool SetWebOSNPUDelegate(std::unique_ptr<tflite::Interpreter> *interpreter);
+#ifdef USE_EDGETPU
+        bool SetEdgeTPUDelegate(std::unique_ptr<tflite::Interpreter> *interpreter);
+#endif
+        bool SetTfLiteGPUDelegate(std::unique_ptr<tflite::Interpreter> *interpreter, AccelerationPolicyManager *apm);
 
-    bool SelectDelegate(std::unique_ptr<tflite::Interpreter> *interpreter, AccelerationPolicyManager *apm);
-
-private:
-    bool SetWebOSNPUDelegate(std::unique_ptr<tflite::Interpreter> *interpreter, AccelerationPolicyManager *apm);
-    bool SetTfLiteGPUDelegate(std::unique_ptr<tflite::Interpreter> *interpreter, AccelerationPolicyManager *apm);
-
-    tflite::ops::builtin::BuiltinOpResolver *resolver_;
-};
-
+        tflite::ops::builtin::BuiltinOpResolver *resolver_;
+#ifdef USE_EDGETPU
+        std::shared_ptr<edgetpu::EdgeTpuContext> edgetpuContext_;
+#endif
+    };
 } // end of namespace aif
-
 #endif

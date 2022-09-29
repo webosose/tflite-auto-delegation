@@ -9,9 +9,8 @@ IF("${AIF_INSTALL_TEST_DIR}" STREQUAL "")
     set(AIF_INSTALL_TEST_DIR "${AIF_INSTALL_DIR}/test")
 ENDIF()
 
-###############################################################
-#####     PACKAGE SETTINGS                                #####
-###############################################################
+OPTION(WITH_EDGETPU "Enable Google Coral EdgeTPU Support" OFF)
+
 # find needed packages
 find_package(PkgConfig)
 pkg_check_modules(GTEST REQUIRED gtest_main)
@@ -35,17 +34,15 @@ link_directories(
     ${PMLOGLIB_LIBRARY_DIRS}
 )
 
-###############################################################
-#####     COMPILE SETTINGS                                #####
-###############################################################
+IF(WITH_EDGETPU)
+    ADD_DEFINITIONS(-DUSE_EDGETPU)
+ENDIF(WITH_EDGETPU)
+
 add_definitions(
     -std=c++14
     -DAIF_INSTALL_DIR="${AIF_INSTALL_DIR}"
 )
 
-########################################################
-####    BINARY SETTINGS                             ####
-########################################################
 set(EXE_NAME auto_delegation_test)
 set(INC_DIR ${CMAKE_SOURCE_DIR}/include)
 set(TEST_INC_DIR ${CMAKE_SOURCE_DIR}/test/include)

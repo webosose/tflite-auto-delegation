@@ -8,37 +8,36 @@
 #include <string>
 #include "rapidjson/document.h"
 
-namespace aif {
-
-class AccelerationPolicyManager
+namespace aif
 {
-public:
-    enum Policy
+    class AccelerationPolicyManager
     {
-        kCPUOnly = 0,
-        kMaximumPrecision,
-        kMinimumLatency,
-        kEnableLoadBalancing,
-        kPytorchModelGPU,
+    public:
+        enum Policy
+        {
+            kCPUOnly = 0,
+            kMaximumPrecision,
+            kMinimumLatency,
+            kEnableLoadBalancing,
+            kPytorchModelGPU,
+        };
+
+        AccelerationPolicyManager();
+        AccelerationPolicyManager(std::string config);
+
+        virtual ~AccelerationPolicyManager();
+
+        bool SetPolicy(Policy policy);
+        Policy GetPolicy();
+
+        bool SetCPUFallbackPercentage(int percentage);
+        int GetCPUFallbackPercentage();
+
+    private:
+        Policy stringToPolicy(std::string policy);
+        Policy policy_ = kCPUOnly;
+        int cpu_fallback_percentage_ = 0;
     };
-
-    AccelerationPolicyManager();
-    AccelerationPolicyManager(std::string config);
-
-    virtual ~AccelerationPolicyManager();
-
-    bool SetPolicy(Policy policy);
-    Policy GetPolicy();
-
-    bool SetCPUFallbackPercentage(int percentage);
-    int GetCPUFallbackPercentage();
-
-private:
-    Policy stringToPolicy(std::string policy);
-    Policy policy_ = kCPUOnly;
-    int cpu_fallback_percentage_ = 0;
-};
-
 } // end of namespace aif
 
 #endif

@@ -7,10 +7,9 @@
 
 #include <PmLogLib.h>
 
-namespace aif {
-
-PmLogContext getADPmLogContext();
-
+namespace aif
+{
+    PmLogContext getADPmLogContext();
 } // end of namespace aif
 
 #endif

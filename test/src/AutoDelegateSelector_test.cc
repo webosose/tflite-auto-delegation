@@ -34,7 +34,8 @@ protected:
         std::string(AIF_INSTALL_DIR) + std::string("/model/face_yunet.tflite"),
         std::string(AIF_INSTALL_DIR) + std::string("/model/face_detection_short_range.tflite"),
         std::string(AIF_INSTALL_DIR) + std::string("/model/posenet_mobilenet_v1_075_353_481_quant_decoder.tflite"),
-        std::string(AIF_INSTALL_DIR) + std::string("/model/selfie_segmentation.tflite")};
+        std::string(AIF_INSTALL_DIR) + std::string("/model/selfie_segmentation.tflite"),
+        std::string(AIF_INSTALL_DIR) + std::string("/model/face-detector-quantized_edgetpu.tflite")};
 };
 
 TEST_F(AutoDelegateSelectorTest, 01_01_selectDelegate_yunet_CPUOnly)
@@ -561,4 +562,32 @@ TEST_F(AutoDelegateSelectorTest, 04_05_selectDelegate_selfiesegmentation_EnableL
 
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
+#endif
+
+#ifndef USE_HOST_TEST
+#ifdef USE_EDGETPU
+TEST_F(AutoDelegateSelectorTest, 05_01_edgetpu_test)
+{
+    std::string model_path = model_paths[4];
+    std::unique_ptr<tflite::FlatBufferModel> model = tflite::FlatBufferModel::BuildFromFile(model_path.c_str());
+    std::unique_ptr<tflite::Interpreter> interpreter;
+    tflite::ops::builtin::BuiltinOpResolver resolver;
+
+    ADS ads(&resolver);
+
+    EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
+
+    APM apm;
+    EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
+
+    EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
+
+    GraphTester graphTester(&interpreter);
+    EXPECT_TRUE(graphTester.FillRandomInputTensor());
+
+    EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
+
+    interpreter.reset();
+}
+#endif
 #endif
