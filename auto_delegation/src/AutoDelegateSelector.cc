@@ -133,6 +133,12 @@ namespace aif
             gpu_opts.inference_priority3 = TfLiteGpuInferencePriority::TFLITE_GPU_INFERENCE_PRIORITY_AUTO;
         }
 
+#ifdef GPU_DELEGATE_ONLY_GL
+        gpu_opts.experimental_flags |= TFLITE_GPU_EXPERIMENTAL_FLAGS_GL_ONLY;
+#else
+        gpu_opts.experimental_flags |= TFLITE_GPU_EXPERIMENTAL_FLAGS_CL_ONLY;
+#endif
+
         auto *delegate = TfLiteGpuDelegateV2Create(&gpu_opts);
         if ((*interpreter)->ModifyGraphWithDelegate(delegate) != kTfLiteOk)
         {
