@@ -27,7 +27,9 @@ protected:
 
     std::vector<std::string> model_paths{
         std::string(AIF_INSTALL_DIR) + std::string("/model/face_detection_short_range.tflite"),
-        std::string(AIF_INSTALL_DIR) + std::string("/model/face-detector-quantized_edgetpu.tflite")};
+        std::string(AIF_INSTALL_DIR) + std::string("/model/face-detector-quantized_edgetpu.tflite"),
+        std::string(AIF_INSTALL_DIR) + std::string("/model/FitTV_Pose2D.tflite")
+    };
 };
 
 TEST_F(AutoDelegateSelectorTest, 01_01_selectDelegate_fdshort_CPUOnly)
@@ -186,6 +188,33 @@ TEST_F(AutoDelegateSelectorTest, 02_02_edgetpu_test)
 
     APM apm;
     EXPECT_TRUE(apm.setPolicy(APM::kMinimumLatency));
+    ADS ads;
+    EXPECT_TRUE(ads.selectDelegate(*interpreter.get(), apm));
+
+    EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
+
+    GraphTester graphTester(*interpreter.get());
+    EXPECT_TRUE(graphTester.fillRandomInputTensor());
+
+    EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
+
+    interpreter.reset();
+}
+#endif
+#endif
+
+#ifndef USE_HOST_TEST
+#ifdef USE_WEBOSNPU
+TEST_F(AutoDelegateSelectorTest, 03_01_webosnpu_test)
+{
+    std::string model_path = model_paths[2];
+    std::unique_ptr<tflite::FlatBufferModel> model = tflite::FlatBufferModel::BuildFromFile(model_path.c_str());
+    std::unique_ptr<tflite::Interpreter> interpreter;
+    tflite::ops::builtin::BuiltinOpResolver resolver;
+
+    EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
+
+    APM apm;
     ADS ads;
     EXPECT_TRUE(ads.selectDelegate(*interpreter.get(), apm));
 

@@ -17,6 +17,10 @@
 #include <tensorflow/lite/delegates/external/external_delegate.h>
 #endif
 
+#ifdef USE_WEBOSNPU
+#include <aif/npu/npu_delegate.h>
+#endif
+
 #include "AccelerationPolicyManager.h"
 
 namespace aif
@@ -29,10 +33,12 @@ namespace aif
         bool selectDelegate(tflite::Interpreter &interpreter, AccelerationPolicyManager &apm);
 
     private:
+#ifdef USE_WEBOSNPU
         bool setWebOSNPUDelegate(tflite::Interpreter &interpreter);
+#endif
         bool setTfLiteGPUDelegate(tflite::Interpreter &interpreter, AccelerationPolicyManager &apm);
 #ifdef USE_EDGETPU
-        bool SetEdgeTPUDelegate(tflite::Interpreter &interpreter);
+        bool setEdgeTPUDelegate(tflite::Interpreter &interpreter);
         const std::string EDGETPU_LIB_PATH = "/usr/lib/libedgetpu.so.1";
 #endif
     };

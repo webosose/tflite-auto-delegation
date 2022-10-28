@@ -41,8 +41,9 @@ namespace aif
             auto op = static_cast<tflite::BuiltinOperator>(registration.builtin_code);
             if (registration.custom_name != nullptr)
             {
+#ifdef USE_WEBOSNPU
                 // check if the model is NPU compiled
-                if (strcmp(registration.custom_name, "webosnpu-custom-op") == 0)
+                if (strcmp(registration.custom_name, "lgnpu_custom_op") == 0)
                 {
                     if (setWebOSNPUDelegate(interpreter) == true)
                     {
@@ -54,10 +55,11 @@ namespace aif
                         return false;
                     }
                 }
+#endif
 #ifdef USE_EDGETPU
-                else if (strcmp(registration.custom_name, "edgetpu-custom-op") == 0)
+                if (strcmp(registration.custom_name, "edgetpu-custom-op") == 0)
                 {
-                    if (SetEdgeTPUDelegate(interpreter) == true)
+                    if (setEdgeTPUDelegate(interpreter) == true)
                     {
                         break;
                     }
@@ -77,13 +79,22 @@ namespace aif
             return true;
     }
 
+#ifdef USE_WEBOSNPU
     bool AutoDelegateSelector::setWebOSNPUDelegate(tflite::Interpreter &interpreter)
     {
+        webos::npu::tflite::NpuDelegateOptions npu_opts = webos::npu::tflite::NpuDelegateOptions();
+        auto *delegate = webos::npu::tflite::TfLiteNpuDelegateCreate(npu_opts);
+        if (interpreter.ModifyGraphWithDelegate(delegate) != kTfLiteOk)
+        {
+            PmLogError(s_pmlogCtx, "ADS", 0, "Something went wrong while setting webOS NPU delegate");
+            return false;
+        }
         return true;
     }
+#endif
 
 #ifdef USE_EDGETPU
-    bool AutoDelegateSelector::SetEdgeTPUDelegate(tflite::Interpreter &interpreter)
+    bool AutoDelegateSelector::setEdgeTPUDelegate(tflite::Interpreter &interpreter)
     {
         auto delegate_options = TfLiteExternalDelegateOptionsDefault(EDGETPU_LIB_PATH.c_str());
 
