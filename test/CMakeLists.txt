@@ -10,7 +10,7 @@ IF("${AIF_INSTALL_TEST_DIR}" STREQUAL "")
 ENDIF()
 
 OPTION(WITH_EDGETPU "Enable Google Coral EdgeTPU Support" OFF)
-OPTION(WITH_WEBOSNPU "Enable webOS NPU Support" OFF)
+OPTION(WITH_NPU "Enable webOS NPU Support" OFF)
 
 # find needed packages
 find_package(PkgConfig)
@@ -39,9 +39,9 @@ IF(WITH_EDGETPU)
     ADD_DEFINITIONS(-DUSE_EDGETPU)
 ENDIF(WITH_EDGETPU)
 
-IF(WITH_WEBOSNPU)
-    ADD_DEFINITIONS(-DUSE_WEBOSNPU)
-ENDIF(WITH_WEBOSNPU)
+IF(WITH_NPU)
+    ADD_DEFINITIONS(-DUSE_NPU)
+ENDIF(WITH_NPU)
 
 add_definitions(
     -std=c++14

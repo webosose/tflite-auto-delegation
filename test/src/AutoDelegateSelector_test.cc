@@ -204,7 +204,7 @@ TEST_F(AutoDelegateSelectorTest, 02_02_edgetpu_test)
 #endif
 
 #ifndef USE_HOST_TEST
-#ifdef USE_WEBOSNPU
+#ifdef USE_NPU
 TEST_F(AutoDelegateSelectorTest, 03_01_webosnpu_test)
 {
     std::string model_path = model_paths[2];

@@ -17,7 +17,7 @@
 #include <tensorflow/lite/delegates/external/external_delegate.h>
 #endif
 
-#ifdef USE_WEBOSNPU
+#ifdef USE_NPU
 #include <aif/npu/npu_delegate.h>
 #endif
 
@@ -33,7 +33,7 @@ namespace aif
         bool selectDelegate(tflite::Interpreter &interpreter, AccelerationPolicyManager &apm);
 
     private:
-#ifdef USE_WEBOSNPU
+#ifdef USE_NPU
         bool setWebOSNPUDelegate(tflite::Interpreter &interpreter);
 #endif
         bool setTfLiteGPUDelegate(tflite::Interpreter &interpreter, AccelerationPolicyManager &apm);

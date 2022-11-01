@@ -41,7 +41,7 @@ namespace aif
             auto op = static_cast<tflite::BuiltinOperator>(registration.builtin_code);
             if (registration.custom_name != nullptr)
             {
-#ifdef USE_WEBOSNPU
+#ifdef USE_NPU
                 // check if the model is NPU compiled
                 if (strcmp(registration.custom_name, "lgnpu_custom_op") == 0)
                 {
@@ -79,7 +79,7 @@ namespace aif
             return true;
     }
 
-#ifdef USE_WEBOSNPU
+#ifdef USE_NPU
     bool AutoDelegateSelector::setWebOSNPUDelegate(tflite::Interpreter &interpreter)
     {
         webos::npu::tflite::NpuDelegateOptions npu_opts = webos::npu::tflite::NpuDelegateOptions();
