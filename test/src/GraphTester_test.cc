@@ -31,20 +31,15 @@ protected:
     }
 
     std::vector<std::string> model_paths{
-        std::string(AIF_INSTALL_DIR) + std::string("/model/face_yunet.tflite"),
-        std::string(AIF_INSTALL_DIR) + std::string("/model/face_detection_short_range.tflite"),
-        std::string(AIF_INSTALL_DIR) + std::string("/model/posenet_mobilenet_v1_075_353_481_quant_decoder.tflite"),
-        std::string(AIF_INSTALL_DIR) + std::string("/model/selfie_segmentation.tflite")};
+        std::string(AIF_INSTALL_DIR) + std::string("/model/face_detection_short_range.tflite")};
 };
 
 TEST_F(GraphTesterTest, 01_graphTester_fdshort_CpuOnly)
 {
-    std::string model_path = model_paths[1];
+    std::string model_path = model_paths[0];
     std::unique_ptr<tflite::FlatBufferModel> model = tflite::FlatBufferModel::BuildFromFile(model_path.c_str());
     std::unique_ptr<tflite::Interpreter> interpreter;
     tflite::ops::builtin::BuiltinOpResolver resolver;
-
-    ADS ads;
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
@@ -54,6 +49,7 @@ TEST_F(GraphTesterTest, 01_graphTester_fdshort_CpuOnly)
 
     APM apm;
     EXPECT_TRUE(apm.SetPolicy(APM::kCPUOnly));
+    ADS ads;
     EXPECT_TRUE(ads.SelectDelegate(*interpreter.get(), &apm));
 
     EXPECT_EQ(graphTester.GetTotalNodeNum(), 164);
@@ -63,9 +59,9 @@ TEST_F(GraphTesterTest, 01_graphTester_fdshort_CpuOnly)
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
 
-    EXPECT_EQ(graphTester.GetTotalNodeNum(), 3);
+    EXPECT_EQ(graphTester.GetTotalNodeNum(), 1);
     EXPECT_EQ(graphTester.GetDelegatedPartitionNum(), 1);
-    EXPECT_EQ(graphTester.GetTotalPartitionNum(), 2);
+    EXPECT_EQ(graphTester.GetTotalPartitionNum(), 1);
 
     EXPECT_TRUE(graphTester.FillRandomInputTensor());
 
@@ -75,12 +71,10 @@ TEST_F(GraphTesterTest, 01_graphTester_fdshort_CpuOnly)
 #ifndef USE_HOST_TEST
 TEST_F(GraphTesterTest, 02_graphTester_fdshort)
 {
-    std::string model_path = model_paths[1];
+    std::string model_path = model_paths[0];
     std::unique_ptr<tflite::FlatBufferModel> model = tflite::FlatBufferModel::BuildFromFile(model_path.c_str());
     std::unique_ptr<tflite::Interpreter> interpreter;
     tflite::ops::builtin::BuiltinOpResolver resolver;
-
-    ADS ads;
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
@@ -91,7 +85,7 @@ TEST_F(GraphTesterTest, 02_graphTester_fdshort)
     APM apm;
     EXPECT_TRUE(apm.SetPolicy(APM::kEnableLoadBalancing));
     EXPECT_TRUE(apm.SetCPUFallbackPercentage(25));
-
+    ADS ads;
     EXPECT_TRUE(ads.SelectDelegate(*interpreter.get(), &apm));
 
     EXPECT_EQ(graphTester.GetTotalNodeNum(), 97);
