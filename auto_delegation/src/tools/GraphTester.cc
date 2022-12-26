@@ -86,6 +86,11 @@ namespace aif
         auto inputs = node.inputs;
         const std::vector<int> &t_inputs = (*interpreter_)->inputs();
         TfLiteTensor *tensor_input = (*interpreter_)->tensor(t_inputs[0]);
+        if (tensor_input == nullptr)
+        {
+            return false;
+        }
+
         TfLiteType model_input_tensor_type = tensor_input->type;
         int input_dims = tensor_input->dims->size;
         int input_size = 1;
@@ -93,6 +98,7 @@ namespace aif
         {
             input_size *= tensor_input->dims->data[i];
         }
+
         for (int i = 0; i < input_size; i++)
         {
             std::uniform_int_distribution<> dist(0, 256);
@@ -100,31 +106,40 @@ namespace aif
             switch (model_input_tensor_type)
             {
             case kTfLiteFloat32:
-                (*interpreter_)->typed_input_tensor<float>(0)[i] = static_cast<float>(rand_pixel) / static_cast<float>(256);
+                if ((*interpreter_)->typed_input_tensor<float>(0) != nullptr)
+                    (*interpreter_)->typed_input_tensor<float>(0)[i] = static_cast<float>(rand_pixel) / static_cast<float>(256);
                 break;
             case kTfLiteInt32:
-                (*interpreter_)->typed_input_tensor<int32_t>(0)[i] = rand_pixel;
+                if ((*interpreter_)->typed_input_tensor<int32_t>(0) != nullptr)
+                    (*interpreter_)->typed_input_tensor<int32_t>(0)[i] = rand_pixel;
                 break;
             case kTfLiteUInt8:
-                (*interpreter_)->typed_input_tensor<uint8_t>(0)[i] = rand_pixel;
+                if ((*interpreter_)->typed_input_tensor<uint8_t>(0) != nullptr)
+                    (*interpreter_)->typed_input_tensor<uint8_t>(0)[i] = rand_pixel;
                 break;
             case kTfLiteInt64:
-                (*interpreter_)->typed_input_tensor<int64_t>(0)[i] = rand_pixel;
+                if ((*interpreter_)->typed_input_tensor<int64_t>(0) != nullptr)
+                    (*interpreter_)->typed_input_tensor<int64_t>(0)[i] = rand_pixel;
                 break;
             case kTfLiteInt16:
-                (*interpreter_)->typed_input_tensor<int16_t>(0)[i] = rand_pixel;
+                if ((*interpreter_)->typed_input_tensor<int16_t>(0) != nullptr)
+                    (*interpreter_)->typed_input_tensor<int16_t>(0)[i] = rand_pixel;
                 break;
             case kTfLiteInt8:
-                (*interpreter_)->typed_input_tensor<int8_t>(0)[i] = rand_pixel;
+                if ((*interpreter_)->typed_input_tensor<int8_t>(0) != nullptr)
+                    (*interpreter_)->typed_input_tensor<int8_t>(0)[i] = rand_pixel;
                 break;
             case kTfLiteFloat64:
-                (*interpreter_)->typed_input_tensor<double>(0)[i] = static_cast<double>(rand_pixel) / static_cast<float>(256);
+                if ((*interpreter_)->typed_input_tensor<double>(0) != nullptr)
+                    (*interpreter_)->typed_input_tensor<double>(0)[i] = static_cast<double>(rand_pixel) / static_cast<float>(256);
                 break;
             case kTfLiteUInt64:
-                (*interpreter_)->typed_input_tensor<uint64_t>(0)[i] = rand_pixel;
+                if ((*interpreter_)->typed_input_tensor<uint64_t>(0) != nullptr)
+                    (*interpreter_)->typed_input_tensor<uint64_t>(0)[i] = rand_pixel;
                 break;
             case kTfLiteUInt32:
-                (*interpreter_)->typed_input_tensor<uint32_t>(0)[i] = rand_pixel;
+                if ((*interpreter_)->typed_input_tensor<uint32_t>(0) != nullptr)
+                    (*interpreter_)->typed_input_tensor<uint32_t>(0)[i] = rand_pixel;
                 break;
             default:
                 break;

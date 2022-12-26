@@ -32,10 +32,14 @@ namespace aif
     bool AutoDelegateSelector::SelectDelegate(std::unique_ptr<tflite::Interpreter> *interpreter, AccelerationPolicyManager *apm)
     {
 
-        if ((apm->GetPolicy() != AccelerationPolicyManager::kEnableLoadBalancing || apm->GetPolicy() != AccelerationPolicyManager::kPytorchModelGPU) && apm->GetCPUFallbackPercentage() != 0)
+        if (apm->GetCPUFallbackPercentage() != 0)
         {
-            PmLogInfo(s_pmlogCtx, "ADS", 0, "current policy does not use load balancing but a non-zero value"
-                                            "is set to cpu fallback percentage. So, the value set for cpu fallback percentage is ignored.");
+            if (apm->GetPolicy() != AccelerationPolicyManager::kEnableLoadBalancing &&
+                apm->GetPolicy() != AccelerationPolicyManager::kPytorchModelGPU)
+            {
+                PmLogInfo(s_pmlogCtx, "ADS", 0, "current policy does not use load balancing but a non-zero value"
+                                                "is set to cpu fallback percentage. So, the value set for cpu fallback percentage is ignored.");
+            }
         }
 
         tflite::Subgraph &subgraph = (*interpreter)->primary_subgraph();
