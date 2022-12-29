@@ -44,7 +44,7 @@ TEST_F(GraphTesterTest, 01_graphTester_fdshort_CpuOnly)
     std::unique_ptr<tflite::Interpreter> interpreter;
     tflite::ops::builtin::BuiltinOpResolver resolver;
 
-    ADS ads(&resolver);
+    ADS ads;
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
@@ -80,7 +80,7 @@ TEST_F(GraphTesterTest, 02_graphTester_fdshort)
     std::unique_ptr<tflite::Interpreter> interpreter;
     tflite::ops::builtin::BuiltinOpResolver resolver;
 
-    ADS ads(&resolver);
+    ADS ads;
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 

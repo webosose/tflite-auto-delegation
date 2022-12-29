@@ -45,7 +45,7 @@ TEST_F(AutoDelegateSelectorTest, 01_01_selectDelegate_yunet_CPUOnly)
     std::unique_ptr<tflite::Interpreter> interpreter;
     tflite::ops::builtin::BuiltinOpResolver resolver;
 
-    ADS ads(&resolver);
+    ADS ads;
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
@@ -70,7 +70,7 @@ TEST_F(AutoDelegateSelectorTest, 01_02_selectDelegate_yunet_MaximumPrecision)
     std::unique_ptr<tflite::Interpreter> interpreter;
     tflite::ops::builtin::BuiltinOpResolver resolver;
 
-    ADS ads(&resolver);
+    ADS ads;
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
@@ -94,7 +94,7 @@ TEST_F(AutoDelegateSelectorTest, 01_03_selectDelegate_yunet_MinimumLatency)
     std::unique_ptr<tflite::Interpreter> interpreter;
     tflite::ops::builtin::BuiltinOpResolver resolver;
 
-    ADS ads(&resolver);
+    ADS ads;
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
@@ -118,7 +118,7 @@ TEST_F(AutoDelegateSelectorTest, 01_04_selectDelegate_yunet_EnableLoadBalancing)
     std::unique_ptr<tflite::Interpreter> interpreter;
     tflite::ops::builtin::BuiltinOpResolver resolver;
 
-    ADS ads(&resolver);
+    ADS ads;
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
@@ -143,7 +143,7 @@ TEST_F(AutoDelegateSelectorTest, 01_05_selectDelegate_yunet_EnableLoadBalancing)
     std::unique_ptr<tflite::Interpreter> interpreter;
     tflite::ops::builtin::BuiltinOpResolver resolver;
 
-    ADS ads(&resolver);
+    ADS ads;
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
@@ -174,7 +174,7 @@ TEST_F(AutoDelegateSelectorTest, 02_01_selectDelegate_fdshort_CPUOnly)
     std::unique_ptr<tflite::Interpreter> interpreter;
     tflite::ops::builtin::BuiltinOpResolver resolver;
 
-    ADS ads(&resolver);
+    ADS ads;
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
@@ -199,7 +199,7 @@ TEST_F(AutoDelegateSelectorTest, 02_02_selectDelegate_fdshort_MaximumPrecision)
     std::unique_ptr<tflite::Interpreter> interpreter;
     tflite::ops::builtin::BuiltinOpResolver resolver;
 
-    ADS ads(&resolver);
+    ADS ads;
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
@@ -223,7 +223,7 @@ TEST_F(AutoDelegateSelectorTest, 02_03_selectDelegate_fdshort_MinimumLatency)
     std::unique_ptr<tflite::Interpreter> interpreter;
     tflite::ops::builtin::BuiltinOpResolver resolver;
 
-    ADS ads(&resolver);
+    ADS ads;
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
@@ -247,7 +247,7 @@ TEST_F(AutoDelegateSelectorTest, 02_04_selectDelegate_fdshort_EnableLoadBalancin
     std::unique_ptr<tflite::Interpreter> interpreter;
     tflite::ops::builtin::BuiltinOpResolver resolver;
 
-    ADS ads(&resolver);
+    ADS ads;
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
@@ -272,7 +272,7 @@ TEST_F(AutoDelegateSelectorTest, 02_05_selectDelegate_fdshort_EnableLoadBalancin
     std::unique_ptr<tflite::Interpreter> interpreter;
     tflite::ops::builtin::BuiltinOpResolver resolver;
 
-    ADS ads(&resolver);
+    ADS ads;
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
@@ -304,7 +304,7 @@ TEST_F(AutoDelegateSelectorTest, 03_01_selectDelegate_posenet_CPUOnly)
     tflite::ops::builtin::BuiltinOpResolver resolver;
     resolver.AddCustom(coral::kPosenetDecoderOp, coral::RegisterPosenetDecoderOp());
 
-    ADS ads(&resolver);
+    ADS ads;
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
@@ -330,7 +330,7 @@ TEST_F(AutoDelegateSelectorTest, 03_02_selectDelegate_posenet_MaximumPrecision)
     tflite::ops::builtin::BuiltinOpResolver resolver;
     resolver.AddCustom(coral::kPosenetDecoderOp, coral::RegisterPosenetDecoderOp());
 
-    ADS ads(&resolver);
+    ADS ads;
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
@@ -355,7 +355,7 @@ TEST_F(AutoDelegateSelectorTest, 03_03_selectDelegate_posenet_MinimumLatency)
     tflite::ops::builtin::BuiltinOpResolver resolver;
     resolver.AddCustom(coral::kPosenetDecoderOp, coral::RegisterPosenetDecoderOp());
 
-    ADS ads(&resolver);
+    ADS ads;
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
@@ -380,7 +380,7 @@ TEST_F(AutoDelegateSelectorTest, 03_04_selectDelegate_posenet_EnableLoadBalancin
     tflite::ops::builtin::BuiltinOpResolver resolver;
     resolver.AddCustom(coral::kPosenetDecoderOp, coral::RegisterPosenetDecoderOp());
 
-    ADS ads(&resolver);
+    ADS ads;
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
@@ -406,7 +406,7 @@ TEST_F(AutoDelegateSelectorTest, 03_05_selectDelegate_posenet_EnableLoadBalancin
     tflite::ops::builtin::BuiltinOpResolver resolver;
     resolver.AddCustom(coral::kPosenetDecoderOp, coral::RegisterPosenetDecoderOp());
 
-    ADS ads(&resolver);
+    ADS ads;
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
@@ -438,7 +438,7 @@ TEST_F(AutoDelegateSelectorTest, 04_01_selectDelegate_selfiesegmentation_CPUOnly
     tflite::ops::builtin::BuiltinOpResolver resolver;
     resolver.AddCustom("Convolution2DTransposeBias", mediapipe::tflite_operations::RegisterConvolution2DTransposeBias());
 
-    ADS ads(&resolver);
+    ADS ads;
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
@@ -464,7 +464,7 @@ TEST_F(AutoDelegateSelectorTest, 04_02_selectDelegate_selfiesegmentation_Maximum
     tflite::ops::builtin::BuiltinOpResolver resolver;
     resolver.AddCustom("Convolution2DTransposeBias", mediapipe::tflite_operations::RegisterConvolution2DTransposeBias());
 
-    ADS ads(&resolver);
+    ADS ads;
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
@@ -489,7 +489,7 @@ TEST_F(AutoDelegateSelectorTest, 04_03_selectDelegate_selfiesegmentation_Minimum
     tflite::ops::builtin::BuiltinOpResolver resolver;
     resolver.AddCustom("Convolution2DTransposeBias", mediapipe::tflite_operations::RegisterConvolution2DTransposeBias());
 
-    ADS ads(&resolver);
+    ADS ads;
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
@@ -514,7 +514,7 @@ TEST_F(AutoDelegateSelectorTest, 04_04_selectDelegate_selfiesegmentation_EnableL
     tflite::ops::builtin::BuiltinOpResolver resolver;
     resolver.AddCustom("Convolution2DTransposeBias", mediapipe::tflite_operations::RegisterConvolution2DTransposeBias());
 
-    ADS ads(&resolver);
+    ADS ads;
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
@@ -540,7 +540,7 @@ TEST_F(AutoDelegateSelectorTest, 04_05_selectDelegate_selfiesegmentation_EnableL
     tflite::ops::builtin::BuiltinOpResolver resolver;
     resolver.AddCustom("Convolution2DTransposeBias", mediapipe::tflite_operations::RegisterConvolution2DTransposeBias());
 
-    ADS ads(&resolver);
+    ADS ads;
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
@@ -573,7 +573,7 @@ TEST_F(AutoDelegateSelectorTest, 05_01_edgetpu_test)
     std::unique_ptr<tflite::Interpreter> interpreter;
     tflite::ops::builtin::BuiltinOpResolver resolver;
 
-    ADS ads(&resolver);
+    ADS ads;
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 

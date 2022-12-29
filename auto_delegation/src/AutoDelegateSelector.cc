@@ -12,21 +12,8 @@ namespace
 
 namespace aif
 {
-    AutoDelegateSelector::AutoDelegateSelector(tflite::ops::builtin::BuiltinOpResolver *resolver)
-        : resolver_(resolver)
+    AutoDelegateSelector::AutoDelegateSelector()
     {
-        // add custom webOSNPU operation to resolver
-#ifdef USE_EDGETPU
-        // add custom EdgeTPU operation to resolver
-        resolver_->AddCustom(edgetpu::kCustomOp, edgetpu::RegisterCustomOp());
-#endif
-    }
-
-    AutoDelegateSelector::~AutoDelegateSelector()
-    {
-#ifdef USE_EDGETPU
-        edgetpuContext_.reset();
-#endif
     }
 
     bool AutoDelegateSelector::SelectDelegate(std::unique_ptr<tflite::Interpreter> *interpreter, AccelerationPolicyManager *apm)
@@ -98,15 +85,14 @@ namespace aif
 #ifdef USE_EDGETPU
     bool AutoDelegateSelector::SetEdgeTPUDelegate(std::unique_ptr<tflite::Interpreter> *interpreter)
     {
-        edgetpuContext_ = edgetpu::EdgeTpuManager::GetSingleton()->OpenDevice();
-        if (edgetpuContext_ == nullptr)
+        auto delegate_options = TfLiteExternalDelegateOptionsDefault(edgetpu_lib_path_.c_str());
+
+        auto external_delegate = TfLiteExternalDelegateCreate(&delegate_options);
+        if ((*interpreter)->ModifyGraphWithDelegate(external_delegate) != kTfLiteOk)
         {
-            PmLogError(s_pmlogCtx, "ADS", 0, "Cannot get EdgeTPU context");
+            PmLogError(s_pmlogCtx, "ADS", 0, "Something went wrong while setting TPU delegate");
             return false;
         }
-
-        (*interpreter)->SetExternalContext(kTfLiteEdgeTpuContext, edgetpuContext_.get());
-        PmLogInfo(s_pmlogCtx, "ADS", 0, "EdgeTPU Delegate is selected.");
         return true;
     }
 #endif

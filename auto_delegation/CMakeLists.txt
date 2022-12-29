@@ -37,10 +37,6 @@ link_directories(
 )
 
 IF(WITH_EDGETPU)
-    FIND_PACKAGE(PkgConfig REQUIRED)
-    PKG_CHECK_MODULES(EDGETPU REQUIRED edgetpu)
-    INCLUDE_DIRECTORIES(${EDGETPU_INCLUDE_DIRS})
-    LINK_DIRECTORIES(${EDGETPU_LIBRARY_DIRS})
     ADD_DEFINITIONS(-DUSE_EDGETPU)
 ENDIF(WITH_EDGETPU)
 
@@ -82,17 +78,6 @@ set(LIBS
     ${PMLOGLIB_LDFLAGS}
     pthread
 )
-
-IF(WITH_EDGETPU)
-    set(SRC_FILES
-        ${SRC_FILES}
-        ${EDGETPU_SRCS}
-    )
-    set(LIBS
-        ${LIBS}
-        ${EDGETPU_LIBRARIES}
-    )
-ENDIF(WITH_EDGETPU)
 
 target_link_libraries(${LIB_NAME}
     ${LIBS}

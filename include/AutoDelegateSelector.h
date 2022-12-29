@@ -14,7 +14,7 @@
 #include <tensorflow/lite/delegates/gpu/delegate.h>
 
 #ifdef USE_EDGETPU
-#include <edgetpu.h>
+#include <tensorflow/lite/delegates/external/external_delegate.h>
 #endif
 
 #include "AccelerationPolicyManager.h"
@@ -24,20 +24,16 @@ namespace aif
     class AutoDelegateSelector
     {
     public:
-        AutoDelegateSelector(tflite::ops::builtin::BuiltinOpResolver *resolver);
-        virtual ~AutoDelegateSelector();
+        AutoDelegateSelector();
+        virtual ~AutoDelegateSelector() = default;
         bool SelectDelegate(std::unique_ptr<tflite::Interpreter> *interpreter, AccelerationPolicyManager *apm);
 
     private:
         bool SetWebOSNPUDelegate(std::unique_ptr<tflite::Interpreter> *interpreter);
+        bool SetTfLiteGPUDelegate(std::unique_ptr<tflite::Interpreter> *interpreter, AccelerationPolicyManager *apm);
 #ifdef USE_EDGETPU
         bool SetEdgeTPUDelegate(std::unique_ptr<tflite::Interpreter> *interpreter);
-#endif
-        bool SetTfLiteGPUDelegate(std::unique_ptr<tflite::Interpreter> *interpreter, AccelerationPolicyManager *apm);
-
-        tflite::ops::builtin::BuiltinOpResolver *resolver_;
-#ifdef USE_EDGETPU
-        std::shared_ptr<edgetpu::EdgeTpuContext> edgetpuContext_;
+        const std::string edgetpu_lib_path_ = "/usr/lib/libedgetpu.so.1";
 #endif
     };
 } // end of namespace aif
