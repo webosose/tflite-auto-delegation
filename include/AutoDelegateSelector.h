@@ -26,13 +26,13 @@ namespace aif
     public:
         AutoDelegateSelector();
         virtual ~AutoDelegateSelector() = default;
-        bool SelectDelegate(std::unique_ptr<tflite::Interpreter> *interpreter, AccelerationPolicyManager *apm);
+        bool SelectDelegate(tflite::Interpreter &interpreter, AccelerationPolicyManager *apm);
 
     private:
-        bool SetWebOSNPUDelegate(std::unique_ptr<tflite::Interpreter> *interpreter);
-        bool SetTfLiteGPUDelegate(std::unique_ptr<tflite::Interpreter> *interpreter, AccelerationPolicyManager *apm);
+        bool SetWebOSNPUDelegate(tflite::Interpreter &interpreter);
+        bool SetTfLiteGPUDelegate(tflite::Interpreter &interpreter, AccelerationPolicyManager *apm);
 #ifdef USE_EDGETPU
-        bool SetEdgeTPUDelegate(std::unique_ptr<tflite::Interpreter> *interpreter);
+        bool SetEdgeTPUDelegate(tflite::Interpreter &interpreter);
         const std::string edgetpu_lib_path_ = "/usr/lib/libedgetpu.so.1";
 #endif
     };

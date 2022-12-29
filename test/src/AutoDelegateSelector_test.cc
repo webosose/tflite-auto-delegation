@@ -52,7 +52,7 @@ TEST_F(AutoDelegateSelectorTest, 01_01_selectDelegate_yunet_CPUOnly)
     APM apm;
     EXPECT_TRUE(apm.SetPolicy(APM::kCPUOnly));
 
-    EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
+    EXPECT_TRUE(ads.SelectDelegate(*interpreter.get(), &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
 
@@ -77,7 +77,7 @@ TEST_F(AutoDelegateSelectorTest, 01_02_selectDelegate_yunet_MaximumPrecision)
     APM apm;
     EXPECT_TRUE(apm.SetPolicy(APM::kMaximumPrecision));
 
-    EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
+    EXPECT_TRUE(ads.SelectDelegate(*interpreter.get(), &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
 
@@ -101,7 +101,7 @@ TEST_F(AutoDelegateSelectorTest, 01_03_selectDelegate_yunet_MinimumLatency)
     APM apm;
     EXPECT_TRUE(apm.SetPolicy(APM::kMinimumLatency));
 
-    EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
+    EXPECT_TRUE(ads.SelectDelegate(*interpreter.get(), &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
 
@@ -126,7 +126,7 @@ TEST_F(AutoDelegateSelectorTest, 01_04_selectDelegate_yunet_EnableLoadBalancing)
     EXPECT_TRUE(apm.SetPolicy(APM::kEnableLoadBalancing));
     EXPECT_TRUE(apm.SetCPUFallbackPercentage(25));
 
-    EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
+    EXPECT_TRUE(ads.SelectDelegate(*interpreter.get(), &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
 
@@ -156,7 +156,7 @@ TEST_F(AutoDelegateSelectorTest, 01_05_selectDelegate_yunet_EnableLoadBalancing)
     EXPECT_EQ(apm.GetCPUFallbackPercentage(), 25);
     EXPECT_EQ(apm.GetPolicy(), APM::kEnableLoadBalancing);
 
-    EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
+    EXPECT_TRUE(ads.SelectDelegate(*interpreter.get(), &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
 
@@ -181,7 +181,7 @@ TEST_F(AutoDelegateSelectorTest, 02_01_selectDelegate_fdshort_CPUOnly)
     APM apm;
     EXPECT_TRUE(apm.SetPolicy(APM::kCPUOnly));
 
-    EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
+    EXPECT_TRUE(ads.SelectDelegate(*interpreter.get(), &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
 
@@ -206,7 +206,7 @@ TEST_F(AutoDelegateSelectorTest, 02_02_selectDelegate_fdshort_MaximumPrecision)
     APM apm;
     EXPECT_TRUE(apm.SetPolicy(APM::kMaximumPrecision));
 
-    EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
+    EXPECT_TRUE(ads.SelectDelegate(*interpreter.get(), &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
 
@@ -230,7 +230,7 @@ TEST_F(AutoDelegateSelectorTest, 02_03_selectDelegate_fdshort_MinimumLatency)
     APM apm;
     EXPECT_TRUE(apm.SetPolicy(APM::kMinimumLatency));
 
-    EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
+    EXPECT_TRUE(ads.SelectDelegate(*interpreter.get(), &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
 
@@ -255,7 +255,7 @@ TEST_F(AutoDelegateSelectorTest, 02_04_selectDelegate_fdshort_EnableLoadBalancin
     EXPECT_TRUE(apm.SetPolicy(APM::kEnableLoadBalancing));
     EXPECT_TRUE(apm.SetCPUFallbackPercentage(15));
 
-    EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
+    EXPECT_TRUE(ads.SelectDelegate(*interpreter.get(), &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
 
@@ -285,7 +285,7 @@ TEST_F(AutoDelegateSelectorTest, 02_05_selectDelegate_fdshort_EnableLoadBalancin
     EXPECT_EQ(apm.GetCPUFallbackPercentage(), 30);
     EXPECT_EQ(apm.GetPolicy(), APM::kEnableLoadBalancing);
 
-    EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
+    EXPECT_TRUE(ads.SelectDelegate(*interpreter.get(), &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
 
@@ -311,7 +311,7 @@ TEST_F(AutoDelegateSelectorTest, 03_01_selectDelegate_posenet_CPUOnly)
     APM apm;
     EXPECT_TRUE(apm.SetPolicy(APM::kCPUOnly));
 
-    EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
+    EXPECT_TRUE(ads.SelectDelegate(*interpreter.get(), &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
 
@@ -337,7 +337,7 @@ TEST_F(AutoDelegateSelectorTest, 03_02_selectDelegate_posenet_MaximumPrecision)
     APM apm;
     EXPECT_TRUE(apm.SetPolicy(APM::kMaximumPrecision));
 
-    EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
+    EXPECT_TRUE(ads.SelectDelegate(*interpreter.get(), &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
 
@@ -362,7 +362,7 @@ TEST_F(AutoDelegateSelectorTest, 03_03_selectDelegate_posenet_MinimumLatency)
     APM apm;
     EXPECT_TRUE(apm.SetPolicy(APM::kMinimumLatency));
 
-    EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
+    EXPECT_TRUE(ads.SelectDelegate(*interpreter.get(), &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
 
@@ -388,7 +388,7 @@ TEST_F(AutoDelegateSelectorTest, 03_04_selectDelegate_posenet_EnableLoadBalancin
     EXPECT_TRUE(apm.SetPolicy(APM::kEnableLoadBalancing));
     EXPECT_TRUE(apm.SetCPUFallbackPercentage(25));
 
-    EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
+    EXPECT_TRUE(ads.SelectDelegate(*interpreter.get(), &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
 
@@ -419,7 +419,7 @@ TEST_F(AutoDelegateSelectorTest, 03_05_selectDelegate_posenet_EnableLoadBalancin
     EXPECT_EQ(apm.GetCPUFallbackPercentage(), 25);
     EXPECT_EQ(apm.GetPolicy(), APM::kEnableLoadBalancing);
 
-    EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
+    EXPECT_TRUE(ads.SelectDelegate(*interpreter.get(), &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
 
@@ -445,7 +445,7 @@ TEST_F(AutoDelegateSelectorTest, 04_01_selectDelegate_selfiesegmentation_CPUOnly
     APM apm;
     EXPECT_TRUE(apm.SetPolicy(APM::kCPUOnly));
 
-    EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
+    EXPECT_TRUE(ads.SelectDelegate(*interpreter.get(), &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
 
@@ -471,7 +471,7 @@ TEST_F(AutoDelegateSelectorTest, 04_02_selectDelegate_selfiesegmentation_Maximum
     APM apm;
     EXPECT_TRUE(apm.SetPolicy(APM::kMaximumPrecision));
 
-    EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
+    EXPECT_TRUE(ads.SelectDelegate(*interpreter.get(), &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
 
@@ -496,7 +496,7 @@ TEST_F(AutoDelegateSelectorTest, 04_03_selectDelegate_selfiesegmentation_Minimum
     APM apm;
     EXPECT_TRUE(apm.SetPolicy(APM::kMinimumLatency));
 
-    EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
+    EXPECT_TRUE(ads.SelectDelegate(*interpreter.get(), &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
 
@@ -522,7 +522,7 @@ TEST_F(AutoDelegateSelectorTest, 04_04_selectDelegate_selfiesegmentation_EnableL
     EXPECT_TRUE(apm.SetPolicy(APM::kEnableLoadBalancing));
     EXPECT_TRUE(apm.SetCPUFallbackPercentage(10));
 
-    EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
+    EXPECT_TRUE(ads.SelectDelegate(*interpreter.get(), &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
 
@@ -553,7 +553,7 @@ TEST_F(AutoDelegateSelectorTest, 04_05_selectDelegate_selfiesegmentation_EnableL
     EXPECT_EQ(apm.GetCPUFallbackPercentage(), 15);
     EXPECT_EQ(apm.GetPolicy(), APM::kEnableLoadBalancing);
 
-    EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
+    EXPECT_TRUE(ads.SelectDelegate(*interpreter.get(), &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
 
@@ -578,7 +578,7 @@ TEST_F(AutoDelegateSelectorTest, 05_01_edgetpu_test)
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
     APM apm;
-    EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
+    EXPECT_TRUE(ads.SelectDelegate(*interpreter.get(), &apm));
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
 

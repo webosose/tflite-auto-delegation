@@ -54,7 +54,7 @@ TEST_F(GraphTesterTest, 01_graphTester_fdshort_CpuOnly)
 
     APM apm;
     EXPECT_TRUE(apm.SetPolicy(APM::kCPUOnly));
-    EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
+    EXPECT_TRUE(ads.SelectDelegate(*interpreter.get(), &apm));
 
     EXPECT_EQ(graphTester.GetTotalNodeNum(), 164);
     EXPECT_EQ(graphTester.GetDelegatedPartitionNum(), 0);
@@ -92,7 +92,7 @@ TEST_F(GraphTesterTest, 02_graphTester_fdshort)
     EXPECT_TRUE(apm.SetPolicy(APM::kEnableLoadBalancing));
     EXPECT_TRUE(apm.SetCPUFallbackPercentage(25));
 
-    EXPECT_TRUE(ads.SelectDelegate(&interpreter, &apm));
+    EXPECT_TRUE(ads.SelectDelegate(*interpreter.get(), &apm));
 
     EXPECT_EQ(graphTester.GetTotalNodeNum(), 97);
     EXPECT_EQ(graphTester.GetDelegatedPartitionNum(), 1);

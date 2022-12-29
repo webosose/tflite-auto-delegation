@@ -16,7 +16,7 @@ namespace aif
     {
     }
 
-    bool AutoDelegateSelector::SelectDelegate(std::unique_ptr<tflite::Interpreter> *interpreter, AccelerationPolicyManager *apm)
+    bool AutoDelegateSelector::SelectDelegate(tflite::Interpreter &interpreter, AccelerationPolicyManager *apm)
     {
 
         if (apm->GetCPUFallbackPercentage() != 0)
@@ -29,7 +29,7 @@ namespace aif
             }
         }
 
-        tflite::Subgraph &subgraph = (*interpreter)->primary_subgraph();
+        tflite::Subgraph &subgraph = interpreter.primary_subgraph();
 
         auto plan = subgraph.execution_plan();
         auto nodes = subgraph.nodes_and_registration();
@@ -77,18 +77,18 @@ namespace aif
             return true;
     }
 
-    bool AutoDelegateSelector::SetWebOSNPUDelegate(std::unique_ptr<tflite::Interpreter> *interpreter)
+    bool AutoDelegateSelector::SetWebOSNPUDelegate(tflite::Interpreter &interpreter)
     {
         return true;
     }
 
 #ifdef USE_EDGETPU
-    bool AutoDelegateSelector::SetEdgeTPUDelegate(std::unique_ptr<tflite::Interpreter> *interpreter)
+    bool AutoDelegateSelector::SetEdgeTPUDelegate(tflite::Interpreter &interpreter)
     {
         auto delegate_options = TfLiteExternalDelegateOptionsDefault(edgetpu_lib_path_.c_str());
 
         auto external_delegate = TfLiteExternalDelegateCreate(&delegate_options);
-        if ((*interpreter)->ModifyGraphWithDelegate(external_delegate) != kTfLiteOk)
+        if (interpreter.ModifyGraphWithDelegate(external_delegate) != kTfLiteOk)
         {
             PmLogError(s_pmlogCtx, "ADS", 0, "Something went wrong while setting TPU delegate");
             return false;
@@ -97,7 +97,7 @@ namespace aif
     }
 #endif
 
-    bool AutoDelegateSelector::SetTfLiteGPUDelegate(std::unique_ptr<tflite::Interpreter> *interpreter, AccelerationPolicyManager *apm)
+    bool AutoDelegateSelector::SetTfLiteGPUDelegate(tflite::Interpreter &interpreter, AccelerationPolicyManager *apm)
     {
         auto policy = apm->GetPolicy();
         TfLiteGpuDelegateOptionsV2 gpu_opts = TfLiteGpuDelegateOptionsV2Default();
@@ -130,7 +130,7 @@ namespace aif
 #endif
 
         auto *delegate = TfLiteGpuDelegateV2Create(&gpu_opts);
-        if ((*interpreter)->ModifyGraphWithDelegate(delegate) != kTfLiteOk)
+        if (interpreter.ModifyGraphWithDelegate(delegate) != kTfLiteOk)
         {
             PmLogError(s_pmlogCtx, "ADS", 0, "Something went wrong while setting TfLiteGPU delegate");
             return false;
