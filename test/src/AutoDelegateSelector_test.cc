@@ -6,11 +6,6 @@
 #include <AutoDelegateSelector.h>
 #include <tools/GraphTester.h>
 
-// custom ops
-#include <customOp/transpose_conv_bias.h>
-#include <customOp/posenet_decoder_op.h>
-#include <customOp/posenet_decoder.h>
-
 using namespace aif;
 
 typedef AutoDelegateSelector ADS;
