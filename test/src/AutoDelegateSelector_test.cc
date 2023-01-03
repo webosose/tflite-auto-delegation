@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2022 LG Electronics Inc.
- * SPDX-License-Identifier: LicenseRef-LGE-Proprietary
+ * SPDX-License-Identifier: Apache-2.0
  */
 #include <gtest/gtest.h>
 #include <AutoDelegateSelector.h>

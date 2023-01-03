@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2022 LG Electronics Inc.
- * SPDX-License-Identifier: LicenseRef-LGE-Proprietary
+ * SPDX-License-Identifier: Apache-2.0
  */
 #ifndef UTILS_H_
 #define UTILS_H_
