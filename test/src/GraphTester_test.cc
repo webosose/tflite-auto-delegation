@@ -38,27 +38,27 @@ TEST_F(GraphTesterTest, 01_graphTester_fdshort_CpuOnly)
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
-    GraphTester graphTester(&interpreter);
-    EXPECT_EQ(graphTester.GetTotalNodeNum(), 164);
-    EXPECT_FALSE(graphTester.IsDelegated());
+    GraphTester graphTester(*interpreter.get());
+    EXPECT_EQ(graphTester.getTotalNodeNum(), 164);
+    EXPECT_FALSE(graphTester.isDelegated());
 
     APM apm;
-    EXPECT_TRUE(apm.SetPolicy(APM::kCPUOnly));
+    EXPECT_TRUE(apm.setPolicy(APM::kCPUOnly));
     ADS ads;
-    EXPECT_TRUE(ads.SelectDelegate(*interpreter.get(), &apm));
+    EXPECT_TRUE(ads.selectDelegate(*interpreter.get(), apm));
 
-    EXPECT_EQ(graphTester.GetTotalNodeNum(), 164);
-    EXPECT_EQ(graphTester.GetDelegatedPartitionNum(), 0);
-    EXPECT_EQ(graphTester.GetTotalPartitionNum(), 1);
-    EXPECT_FALSE(graphTester.IsDelegated());
+    EXPECT_EQ(graphTester.getTotalNodeNum(), 164);
+    EXPECT_EQ(graphTester.getDelegatedPartitionNum(), 0);
+    EXPECT_EQ(graphTester.getTotalPartitionNum(), 1);
+    EXPECT_FALSE(graphTester.isDelegated());
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
 
-    EXPECT_EQ(graphTester.GetTotalNodeNum(), 1);
-    EXPECT_EQ(graphTester.GetDelegatedPartitionNum(), 1);
-    EXPECT_EQ(graphTester.GetTotalPartitionNum(), 1);
+    EXPECT_EQ(graphTester.getTotalNodeNum(), 1);
+    EXPECT_EQ(graphTester.getDelegatedPartitionNum(), 1);
+    EXPECT_EQ(graphTester.getTotalPartitionNum(), 1);
 
-    EXPECT_TRUE(graphTester.FillRandomInputTensor());
+    EXPECT_TRUE(graphTester.fillRandomInputTensor());
 
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
@@ -73,28 +73,28 @@ TEST_F(GraphTesterTest, 02_graphTester_fdshort)
 
     EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
 
-    GraphTester graphTester(&interpreter);
-    EXPECT_EQ(graphTester.GetTotalNodeNum(), 164);
-    EXPECT_FALSE(graphTester.IsDelegated());
+    GraphTester graphTester(*interpreter.get());
+    EXPECT_EQ(graphTester.getTotalNodeNum(), 164);
+    EXPECT_FALSE(graphTester.isDelegated());
 
     APM apm;
-    EXPECT_TRUE(apm.SetPolicy(APM::kEnableLoadBalancing));
-    EXPECT_TRUE(apm.SetCPUFallbackPercentage(25));
+    EXPECT_TRUE(apm.setPolicy(APM::kEnableLoadBalancing));
+    EXPECT_TRUE(apm.setCPUFallbackPercentage(25));
     ADS ads;
-    EXPECT_TRUE(ads.SelectDelegate(*interpreter.get(), &apm));
+    EXPECT_TRUE(ads.selectDelegate(*interpreter.get(), apm));
 
-    EXPECT_EQ(graphTester.GetTotalNodeNum(), 97);
-    EXPECT_EQ(graphTester.GetDelegatedPartitionNum(), 1);
-    EXPECT_EQ(graphTester.GetTotalPartitionNum(), 2);
-    EXPECT_TRUE(graphTester.IsDelegated());
+    EXPECT_EQ(graphTester.getTotalNodeNum(), 97);
+    EXPECT_EQ(graphTester.getDelegatedPartitionNum(), 1);
+    EXPECT_EQ(graphTester.getTotalPartitionNum(), 2);
+    EXPECT_TRUE(graphTester.isDelegated());
 
     EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
 
-    EXPECT_EQ(graphTester.GetTotalNodeNum(), 2);
-    EXPECT_EQ(graphTester.GetDelegatedPartitionNum(), 2);
-    EXPECT_EQ(graphTester.GetTotalPartitionNum(), 2);
+    EXPECT_EQ(graphTester.getTotalNodeNum(), 2);
+    EXPECT_EQ(graphTester.getDelegatedPartitionNum(), 2);
+    EXPECT_EQ(graphTester.getTotalPartitionNum(), 2);
 
-    EXPECT_TRUE(graphTester.FillRandomInputTensor());
+    EXPECT_TRUE(graphTester.fillRandomInputTensor());
 
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }

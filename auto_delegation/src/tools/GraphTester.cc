@@ -6,8 +6,8 @@
 
 namespace aif
 {
-    GraphTester::GraphTester(std::unique_ptr<tflite::Interpreter> *interpreter)
-        : interpreter_(interpreter)
+    GraphTester::GraphTester(tflite::Interpreter &interpreter)
+        : m_interpreter(interpreter)
     {
     }
 
@@ -15,16 +15,16 @@ namespace aif
     {
     }
 
-    int GraphTester::GetTotalNodeNum()
+    int GraphTester::getTotalNodeNum()
     {
-        tflite::Subgraph &subgraph = (*interpreter_)->primary_subgraph();
+        const tflite::Subgraph &subgraph = m_interpreter.primary_subgraph();
         return subgraph.execution_plan().size();
     }
 
-    int GraphTester::GetTotalPartitionNum()
+    int GraphTester::getTotalPartitionNum()
     {
         int num_partition = 0;
-        tflite::Subgraph &subgraph = (*interpreter_)->primary_subgraph();
+        const tflite::Subgraph &subgraph = m_interpreter.primary_subgraph();
         auto plan = subgraph.execution_plan();
         auto nodes = subgraph.nodes_and_registration();
         auto plan_size = plan.size();
@@ -50,10 +50,10 @@ namespace aif
         return num_partition;
     }
 
-    int GraphTester::GetDelegatedPartitionNum()
+    int GraphTester::getDelegatedPartitionNum()
     {
         int num_delegated_partition = 0;
-        tflite::Subgraph &subgraph = (*interpreter_)->primary_subgraph();
+        const tflite::Subgraph &subgraph = m_interpreter.primary_subgraph();
         auto plan = subgraph.execution_plan();
         auto nodes = subgraph.nodes_and_registration();
         auto plan_size = plan.size();
@@ -69,23 +69,23 @@ namespace aif
         return num_delegated_partition;
     }
 
-    bool GraphTester::IsDelegated()
+    bool GraphTester::isDelegated()
     {
-        return GraphTester::GetDelegatedPartitionNum() > 0 ? true : false;
+        return GraphTester::getDelegatedPartitionNum() > 0 ? true : false;
     }
 
     std::random_device rd;
     std::mt19937 gen(rd());
-    bool GraphTester::FillRandomInputTensor()
+    bool GraphTester::fillRandomInputTensor()
     {
-        tflite::Subgraph &subgraph = (*interpreter_)->primary_subgraph();
+        const tflite::Subgraph &subgraph = m_interpreter.primary_subgraph();
         auto plan = subgraph.execution_plan();
         auto nodes = subgraph.nodes_and_registration();
         auto plan0 = plan[0];
         auto node = nodes[plan0].first;
         auto inputs = node.inputs;
-        const std::vector<int> &t_inputs = (*interpreter_)->inputs();
-        TfLiteTensor *tensor_input = (*interpreter_)->tensor(t_inputs[0]);
+        const std::vector<int> &t_inputs = m_interpreter.inputs();
+        TfLiteTensor *tensor_input = m_interpreter.tensor(t_inputs[0]);
         if (tensor_input == nullptr)
         {
             return false;
@@ -106,40 +106,40 @@ namespace aif
             switch (model_input_tensor_type)
             {
             case kTfLiteFloat32:
-                if ((*interpreter_)->typed_input_tensor<float>(0) != nullptr)
-                    (*interpreter_)->typed_input_tensor<float>(0)[i] = static_cast<float>(rand_pixel) / static_cast<float>(256);
+                if (m_interpreter.typed_input_tensor<float>(0) != nullptr)
+                    m_interpreter.typed_input_tensor<float>(0)[i] = static_cast<float>(rand_pixel) / static_cast<float>(256);
                 break;
             case kTfLiteInt32:
-                if ((*interpreter_)->typed_input_tensor<int32_t>(0) != nullptr)
-                    (*interpreter_)->typed_input_tensor<int32_t>(0)[i] = rand_pixel;
+                if (m_interpreter.typed_input_tensor<int32_t>(0) != nullptr)
+                    m_interpreter.typed_input_tensor<int32_t>(0)[i] = rand_pixel;
                 break;
             case kTfLiteUInt8:
-                if ((*interpreter_)->typed_input_tensor<uint8_t>(0) != nullptr)
-                    (*interpreter_)->typed_input_tensor<uint8_t>(0)[i] = rand_pixel;
+                if (m_interpreter.typed_input_tensor<uint8_t>(0) != nullptr)
+                    m_interpreter.typed_input_tensor<uint8_t>(0)[i] = rand_pixel;
                 break;
             case kTfLiteInt64:
-                if ((*interpreter_)->typed_input_tensor<int64_t>(0) != nullptr)
-                    (*interpreter_)->typed_input_tensor<int64_t>(0)[i] = rand_pixel;
+                if (m_interpreter.typed_input_tensor<int64_t>(0) != nullptr)
+                    m_interpreter.typed_input_tensor<int64_t>(0)[i] = rand_pixel;
                 break;
             case kTfLiteInt16:
-                if ((*interpreter_)->typed_input_tensor<int16_t>(0) != nullptr)
-                    (*interpreter_)->typed_input_tensor<int16_t>(0)[i] = rand_pixel;
+                if (m_interpreter.typed_input_tensor<int16_t>(0) != nullptr)
+                    m_interpreter.typed_input_tensor<int16_t>(0)[i] = rand_pixel;
                 break;
             case kTfLiteInt8:
-                if ((*interpreter_)->typed_input_tensor<int8_t>(0) != nullptr)
-                    (*interpreter_)->typed_input_tensor<int8_t>(0)[i] = rand_pixel;
+                if (m_interpreter.typed_input_tensor<int8_t>(0) != nullptr)
+                    m_interpreter.typed_input_tensor<int8_t>(0)[i] = rand_pixel;
                 break;
             case kTfLiteFloat64:
-                if ((*interpreter_)->typed_input_tensor<double>(0) != nullptr)
-                    (*interpreter_)->typed_input_tensor<double>(0)[i] = static_cast<double>(rand_pixel) / static_cast<float>(256);
+                if (m_interpreter.typed_input_tensor<double>(0) != nullptr)
+                    m_interpreter.typed_input_tensor<double>(0)[i] = static_cast<double>(rand_pixel) / static_cast<float>(256);
                 break;
             case kTfLiteUInt64:
-                if ((*interpreter_)->typed_input_tensor<uint64_t>(0) != nullptr)
-                    (*interpreter_)->typed_input_tensor<uint64_t>(0)[i] = rand_pixel;
+                if (m_interpreter.typed_input_tensor<uint64_t>(0) != nullptr)
+                    m_interpreter.typed_input_tensor<uint64_t>(0)[i] = rand_pixel;
                 break;
             case kTfLiteUInt32:
-                if ((*interpreter_)->typed_input_tensor<uint32_t>(0) != nullptr)
-                    (*interpreter_)->typed_input_tensor<uint32_t>(0)[i] = rand_pixel;
+                if (m_interpreter.typed_input_tensor<uint32_t>(0) != nullptr)
+                    m_interpreter.typed_input_tensor<uint32_t>(0)[i] = rand_pixel;
                 break;
             default:
                 break;

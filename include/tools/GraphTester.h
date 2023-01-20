@@ -17,18 +17,18 @@ namespace aif
     class GraphTester
     {
     public:
-        GraphTester(std::unique_ptr<tflite::Interpreter> *interpreter);
+        GraphTester(tflite::Interpreter &interpreter);
         virtual ~GraphTester();
 
-        int GetTotalNodeNum();
-        int GetTotalPartitionNum();
-        int GetDelegatedPartitionNum();
-        bool IsDelegated();
+        int getTotalNodeNum();
+        int getTotalPartitionNum();
+        int getDelegatedPartitionNum();
+        bool isDelegated();
 
-        bool FillRandomInputTensor();
+        bool fillRandomInputTensor();
 
     private:
-        std::unique_ptr<tflite::Interpreter> *interpreter_;
+        tflite::Interpreter &m_interpreter;
     };
 } // end of namespace aif
 

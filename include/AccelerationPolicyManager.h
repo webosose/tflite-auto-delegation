@@ -23,20 +23,20 @@ namespace aif
         };
 
         AccelerationPolicyManager();
-        AccelerationPolicyManager(std::string config);
+        AccelerationPolicyManager(const std::string &config);
 
         virtual ~AccelerationPolicyManager();
 
-        bool SetPolicy(Policy policy);
-        Policy GetPolicy();
+        bool setPolicy(Policy policy);
+        Policy getPolicy();
 
-        bool SetCPUFallbackPercentage(int percentage);
-        int GetCPUFallbackPercentage();
+        bool setCPUFallbackPercentage(int percentage);
+        int getCPUFallbackPercentage();
 
     private:
-        Policy stringToPolicy(std::string policy);
-        Policy policy_ = kCPUOnly;
-        int cpu_fallback_percentage_ = 0;
+        Policy stringToPolicy(const std::string &policy);
+        Policy m_policy = kCPUOnly;
+        int m_cpuFallbackPercentage = 0;
     };
 } // end of namespace aif
 

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 #include "AccelerationPolicyManager.h"
-#include "tools/Utils.h"
+#include "tools/Logger.h"
 
 namespace
 {
@@ -16,7 +16,7 @@ namespace aif
     {
     }
 
-    AccelerationPolicyManager::AccelerationPolicyManager(std::string config)
+    AccelerationPolicyManager::AccelerationPolicyManager(const std::string &config)
     {
         rapidjson::Document d;
         d.Parse(config.c_str());
@@ -24,12 +24,12 @@ namespace aif
         if (!d.HasParseError() && d.FindMember("policy") != d.MemberEnd())
         {
             Policy policy = stringToPolicy(d["policy"].GetString());
-            SetPolicy(policy);
+            setPolicy(policy);
 
             if (d.FindMember("cpu_fallback_percentage") != d.MemberEnd())
             {
                 int cpuFallbackPercentage = d["cpu_fallback_percentage"].GetInt();
-                SetCPUFallbackPercentage(cpuFallbackPercentage);
+                setCPUFallbackPercentage(cpuFallbackPercentage);
             }
         }
     }
@@ -38,11 +38,11 @@ namespace aif
     {
     }
 
-    bool AccelerationPolicyManager::SetPolicy(AccelerationPolicyManager::Policy policy)
+    bool AccelerationPolicyManager::setPolicy(AccelerationPolicyManager::Policy policy)
     {
-        policy_ = policy;
+        m_policy = policy;
 
-        switch (policy_)
+        switch (m_policy)
         {
         case kCPUOnly:
             PmLogInfo(s_pmlogCtx, "APM", 0, "Set Acceleration Policy: CPU Only");
@@ -66,31 +66,31 @@ namespace aif
         return true;
     }
 
-    AccelerationPolicyManager::Policy AccelerationPolicyManager::GetPolicy()
+    AccelerationPolicyManager::Policy AccelerationPolicyManager::getPolicy()
     {
-        return policy_;
+        return m_policy;
     }
 
-    bool AccelerationPolicyManager::SetCPUFallbackPercentage(int percentage)
+    bool AccelerationPolicyManager::setCPUFallbackPercentage(int percentage)
     {
         if (percentage < 0)
             percentage = 0;
         else if (percentage > 100)
             percentage = 100;
 
-        cpu_fallback_percentage_ = percentage;
+        m_cpuFallbackPercentage = percentage;
 
-        PmLogInfo(s_pmlogCtx, "APM", 0, "Set CPU Fallback Percentage: %d", cpu_fallback_percentage_);
+        PmLogInfo(s_pmlogCtx, "APM", 0, "Set CPU Fallback Percentage: %d", m_cpuFallbackPercentage);
 
         return true;
     }
 
-    int AccelerationPolicyManager::GetCPUFallbackPercentage()
+    int AccelerationPolicyManager::getCPUFallbackPercentage()
     {
-        return cpu_fallback_percentage_;
+        return m_cpuFallbackPercentage;
     }
 
-    AccelerationPolicyManager::Policy AccelerationPolicyManager::stringToPolicy(std::string policyStr)
+    AccelerationPolicyManager::Policy AccelerationPolicyManager::stringToPolicy(const std::string &policyStr)
     {
 
         AccelerationPolicyManager::Policy policy = AccelerationPolicyManager::Policy::kCPUOnly;

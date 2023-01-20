@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 #include "AutoDelegateSelector.h"
-#include "tools/Utils.h"
+#include "tools/Logger.h"
 
 namespace
 {
@@ -16,13 +16,13 @@ namespace aif
     {
     }
 
-    bool AutoDelegateSelector::SelectDelegate(tflite::Interpreter &interpreter, AccelerationPolicyManager *apm)
+    bool AutoDelegateSelector::selectDelegate(tflite::Interpreter &interpreter, AccelerationPolicyManager &apm)
     {
 
-        if (apm->GetCPUFallbackPercentage() != 0)
+        if (apm.getCPUFallbackPercentage() != 0)
         {
-            if (apm->GetPolicy() != AccelerationPolicyManager::kEnableLoadBalancing &&
-                apm->GetPolicy() != AccelerationPolicyManager::kPytorchModelGPU)
+            if (apm.getPolicy() != AccelerationPolicyManager::kEnableLoadBalancing &&
+                apm.getPolicy() != AccelerationPolicyManager::kPytorchModelGPU)
             {
                 PmLogInfo(s_pmlogCtx, "ADS", 0, "current policy does not use load balancing but a non-zero value"
                                                 "is set to cpu fallback percentage. So, the value set for cpu fallback percentage is ignored.");
@@ -44,7 +44,7 @@ namespace aif
                 // check if the model is NPU compiled
                 if (strcmp(registration.custom_name, "webosnpu-custom-op") == 0)
                 {
-                    if (SetWebOSNPUDelegate(interpreter) == true)
+                    if (setWebOSNPUDelegate(interpreter) == true)
                     {
                         break;
                     }
@@ -71,13 +71,13 @@ namespace aif
             }
         }
 
-        if (apm->GetPolicy() != AccelerationPolicyManager::kCPUOnly)
-            return SetTfLiteGPUDelegate(interpreter, apm);
+        if (apm.getPolicy() != AccelerationPolicyManager::kCPUOnly)
+            return setTfLiteGPUDelegate(interpreter, apm);
         else
             return true;
     }
 
-    bool AutoDelegateSelector::SetWebOSNPUDelegate(tflite::Interpreter &interpreter)
+    bool AutoDelegateSelector::setWebOSNPUDelegate(tflite::Interpreter &interpreter)
     {
         return true;
     }
@@ -85,7 +85,7 @@ namespace aif
 #ifdef USE_EDGETPU
     bool AutoDelegateSelector::SetEdgeTPUDelegate(tflite::Interpreter &interpreter)
     {
-        auto delegate_options = TfLiteExternalDelegateOptionsDefault(edgetpu_lib_path_.c_str());
+        auto delegate_options = TfLiteExternalDelegateOptionsDefault(EDGETPU_LIB_PATH.c_str());
 
         auto external_delegate = TfLiteExternalDelegateCreate(&delegate_options);
         if (interpreter.ModifyGraphWithDelegate(external_delegate) != kTfLiteOk)
@@ -97,26 +97,29 @@ namespace aif
     }
 #endif
 
-    bool AutoDelegateSelector::SetTfLiteGPUDelegate(tflite::Interpreter &interpreter, AccelerationPolicyManager *apm)
+    bool AutoDelegateSelector::setTfLiteGPUDelegate(tflite::Interpreter &interpreter, AccelerationPolicyManager &apm)
     {
-        auto policy = apm->GetPolicy();
+        auto policy = apm.getPolicy();
         TfLiteGpuDelegateOptionsV2 gpu_opts = TfLiteGpuDelegateOptionsV2Default();
         if (policy == AccelerationPolicyManager::kMinimumLatency)
         {
+            gpu_opts.cpu_fallback_percentage = 0;
+            gpu_opts.is_pytorch_converted_model = false;
             gpu_opts.inference_priority1 = TfLiteGpuInferencePriority::TFLITE_GPU_INFERENCE_PRIORITY_MIN_LATENCY;
             gpu_opts.inference_priority2 = TfLiteGpuInferencePriority::TFLITE_GPU_INFERENCE_PRIORITY_AUTO;
             gpu_opts.inference_priority3 = TfLiteGpuInferencePriority::TFLITE_GPU_INFERENCE_PRIORITY_AUTO;
         }
         else if (policy == AccelerationPolicyManager::kEnableLoadBalancing)
         {
-            gpu_opts.cpu_fallback_percentage = apm->GetCPUFallbackPercentage();
+            gpu_opts.cpu_fallback_percentage = apm.getCPUFallbackPercentage();
+            gpu_opts.is_pytorch_converted_model = false;
             gpu_opts.inference_priority1 = TfLiteGpuInferencePriority::TFLITE_GPU_INFERENCE_PRIORITY_MIN_MEMORY_USAGE;
             gpu_opts.inference_priority2 = TfLiteGpuInferencePriority::TFLITE_GPU_INFERENCE_PRIORITY_AUTO;
             gpu_opts.inference_priority3 = TfLiteGpuInferencePriority::TFLITE_GPU_INFERENCE_PRIORITY_AUTO;
         }
         else if (policy == AccelerationPolicyManager::kPytorchModelGPU)
         {
-            gpu_opts.cpu_fallback_percentage = apm->GetCPUFallbackPercentage();
+            gpu_opts.cpu_fallback_percentage = apm.getCPUFallbackPercentage();
             gpu_opts.is_pytorch_converted_model = true;
             gpu_opts.inference_priority1 = TfLiteGpuInferencePriority::TFLITE_GPU_INFERENCE_PRIORITY_MIN_MEMORY_USAGE;
             gpu_opts.inference_priority2 = TfLiteGpuInferencePriority::TFLITE_GPU_INFERENCE_PRIORITY_AUTO;
