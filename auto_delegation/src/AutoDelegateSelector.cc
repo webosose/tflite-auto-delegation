@@ -83,8 +83,10 @@ namespace aif
     bool AutoDelegateSelector::setWebOSNPUDelegate(tflite::Interpreter &interpreter)
     {
         webos::npu::tflite::NpuDelegateOptions npu_opts = webos::npu::tflite::NpuDelegateOptions();
-        auto *delegate = webos::npu::tflite::TfLiteNpuDelegateCreate(npu_opts);
-        if (interpreter.ModifyGraphWithDelegate(delegate) != kTfLiteOk)
+        auto delegatePtr = TfLiteDelegatePtr(
+                webos::npu::tflite::TfLiteNpuDelegateCreate(npu_opts),
+                webos::npu::tflite::TfLiteNpuDelegateDelete);
+        if (interpreter.ModifyGraphWithDelegate(delegatePtr.get()) != kTfLiteOk)
         {
             PmLogError(s_pmlogCtx, "ADS", 0, "Something went wrong while setting webOS NPU delegate");
             return false;
