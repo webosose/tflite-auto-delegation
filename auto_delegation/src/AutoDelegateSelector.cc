@@ -86,7 +86,7 @@ namespace aif
         auto delegatePtr = TfLiteDelegatePtr(
                 webos::npu::tflite::TfLiteNpuDelegateCreate(npu_opts),
                 webos::npu::tflite::TfLiteNpuDelegateDelete);
-        if (interpreter.ModifyGraphWithDelegate(delegatePtr.get()) != kTfLiteOk)
+        if (interpreter.ModifyGraphWithDelegate(std::move(delegatePtr)) != kTfLiteOk)
         {
             PmLogError(s_pmlogCtx, "ADS", 0, "Something went wrong while setting webOS NPU delegate");
             return false;
