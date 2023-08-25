@@ -4,7 +4,7 @@
  */
 #include <gtest/gtest.h>
 #include <AutoDelegateSelector.h>
-#include <tools/GraphTester.h>
+#include <GraphTester.h>
 
 using namespace aif;
 

@@ -4,7 +4,7 @@
  */
 #include <gtest/gtest.h>
 #include <AutoDelegateSelector.h>
-#include <tools/GraphTester.h>
+#include <GraphTester.h>
 
 using namespace aif;
 
@@ -28,8 +28,7 @@ protected:
     std::vector<std::string> model_paths{
         std::string(AIF_INSTALL_DIR) + std::string("/model/face_detection_short_range.tflite"),
         std::string(AIF_INSTALL_DIR) + std::string("/model/face-detector-quantized_edgetpu.tflite"),
-        std::string(AIF_INSTALL_DIR) + std::string("/model/FitTV_Pose2D.tflite")
-    };
+        std::string(AIF_INSTALL_DIR) + std::string("/model/FitTV_Pose2D.tflite")};
 };
 
 TEST_F(AutoDelegateSelectorTest, 01_01_selectDelegate_fdshort_CPUOnly)

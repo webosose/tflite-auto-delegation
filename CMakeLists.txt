@@ -7,7 +7,7 @@ add_subdirectory(auto_delegation)
 
 IF(WITH_HOST_TEST)        ### for meta-shift unit test ###
     enable_testing()
-    add_subdirectory(test)
+    add_subdirectory(tests)
 ELSE()
-    add_subdirectory(test)
+    add_subdirectory(tests)
 ENDIF()

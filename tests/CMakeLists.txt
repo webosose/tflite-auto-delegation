@@ -50,8 +50,8 @@ add_definitions(
 
 set(EXE_NAME auto_delegation_test)
 set(INC_DIR ${CMAKE_SOURCE_DIR}/include)
-set(TEST_INC_DIR ${CMAKE_SOURCE_DIR}/test/include)
-set(SRC_DIR ${CMAKE_SOURCE_DIR}/test/src)
+set(TEST_INC_DIR ${CMAKE_SOURCE_DIR}/tests/include)
+set(SRC_DIR ${CMAKE_SOURCE_DIR}/tests/src)
 
 # include directories
 include_directories("${INC_DIR}")
@@ -59,6 +59,7 @@ include_directories("${TEST_INC_DIR}")
 
 # Source Files
 set(SRC_FILES
+    ${SRC_DIR}/GraphTester.cc
     ${SRC_DIR}/AccelerationPolicyManager_test.cc
     ${SRC_DIR}/AutoDelegateSelector_test.cc
     ${SRC_DIR}/GraphTester_test.cc

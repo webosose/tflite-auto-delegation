@@ -35,7 +35,12 @@ namespace aif
         auto nodes = subgraph.nodes_and_registration();
         for (int i = 0; i < plan.size(); i++)
         {
-            auto idx = plan[i];
+            int idx = plan[i];
+            if (idx < 0 || idx >= nodes.size())
+            {
+                PmLogError(s_pmlogCtx, "ADS", 0, "Execution plan index error");
+                return false;
+            }
             auto registration = nodes[idx].second;
 
             auto op = static_cast<tflite::BuiltinOperator>(registration.builtin_code);
@@ -84,8 +89,8 @@ namespace aif
     {
         webos::npu::tflite::NpuDelegateOptions npu_opts = webos::npu::tflite::NpuDelegateOptions();
         auto delegatePtr = tflite::Interpreter::TfLiteDelegatePtr(
-                webos::npu::tflite::TfLiteNpuDelegateCreate(npu_opts),
-                webos::npu::tflite::TfLiteNpuDelegateDelete);
+            webos::npu::tflite::TfLiteNpuDelegateCreate(npu_opts),
+            webos::npu::tflite::TfLiteNpuDelegateDelete);
         if (interpreter.ModifyGraphWithDelegate(std::move(delegatePtr)) != kTfLiteOk)
         {
             PmLogError(s_pmlogCtx, "ADS", 0, "Something went wrong while setting webOS NPU delegate");
