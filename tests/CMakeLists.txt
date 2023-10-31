@@ -88,7 +88,6 @@ IF(WITH_HOST_TEST)
     ADD_DEFINITIONS(-DUSE_HOST_TEST)
 
     file(MAKE_DIRECTORY ${AIF_INSTALL_DIR})                ### AIF_INSTALL_DIR == ${CMAKE_BINARY_DIR}/test/tmp
-    file(COPY ${CMAKE_SOURCE_DIR}/model DESTINATION ${AIF_INSTALL_DIR})
 
     include(GoogleTest)
     gtest_add_tests(${EXE_NAME} "" AUTO)
