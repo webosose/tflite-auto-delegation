@@ -32,19 +32,22 @@ namespace aif
                 setCPUFallbackPercentage(cpuFallbackPercentage);
             }
         }
-        if (!d.HasParseError() && d.HasMember("serialization")) {
-            if (d["serialization"].HasMember("dir_path") && d["serialization"].HasMember("model_token")) {
+        if (!d.HasParseError() && d.HasMember("serialization"))
+        {
+            if (d["serialization"].HasMember("dir_path") && d["serialization"].HasMember("model_token"))
+            {
                 Caching cache;
 
                 cache.useCache = true;
-                cache.serialization_dir = d["serialization"]["dir_path"].GetString();
-                cache.model_token = d["serialization"]["model_token"].GetString();
-                setCache(cache);
-            } else {
+                cache.serialization_dir = d["serialization"]["dir_path"].IsString() ? d["serialization"]["dir_path"].GetString() : "";
+                cache.model_token = d["serialization"]["model_token"].IsString() ? d["serialization"]["model_token"].GetString() : "";
+                setCache(std::move(cache));
+            }
+            else
+            {
                 PmLogError(s_pmlogCtx, "APM", 0, "dir_path or model_token is invalid");
             }
         }
-
     }
 
     AccelerationPolicyManager::~AccelerationPolicyManager()
@@ -123,7 +126,7 @@ namespace aif
 
     void AccelerationPolicyManager::setCache(AccelerationPolicyManager::Caching cache)
     {
-        m_cache = cache;
+        m_cache = std::move(cache);
     }
 
     AccelerationPolicyManager::Caching AccelerationPolicyManager::getCache()

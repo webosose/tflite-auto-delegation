@@ -41,9 +41,8 @@ namespace aif
                 PmLogError(s_pmlogCtx, "ADS", 0, "Execution plan index error");
                 return false;
             }
-            auto registration = nodes[idx].second;
+            const auto &registration = nodes[idx].second;
 
-            auto op = static_cast<tflite::BuiltinOperator>(registration.builtin_code);
             if (registration.custom_name != nullptr)
             {
 #ifdef USE_NPU
