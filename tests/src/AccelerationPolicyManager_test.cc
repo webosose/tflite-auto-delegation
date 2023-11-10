@@ -136,3 +136,21 @@ TEST_F(AccelerationPolicyManagerTest, 06_set_and_get_cpu_fallback_percentage)
     EXPECT_TRUE(apm.setCPUFallbackPercentage(-10));
     EXPECT_EQ(apm.getCPUFallbackPercentage(), 0);
 }
+
+TEST_F(AccelerationPolicyManagerTest, 07_set_and_get_GPU_Caching)
+{
+    std::string config = R"(
+        {
+            "serialization" : {
+                "dir_path" : "/usr/share/aif",
+                "model_token" : "pose2d_gpu_mid"
+            }
+        }
+    )";
+
+    APM apm(config);
+    EXPECT_EQ(apm.getCache().useCache, true);
+    EXPECT_EQ(apm.getCache().serialization_dir, "/usr/share/aif");
+    EXPECT_EQ(apm.getCache().model_token, "pose2d_gpu_mid");
+    EXPECT_EQ(apm.getPolicy(), APM::kEnableLoadBalancing);
+}

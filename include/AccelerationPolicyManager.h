@@ -22,6 +22,14 @@ namespace aif
             kPytorchModelGPU,
         };
 
+        typedef struct Caching
+        {
+            bool useCache;
+            std::string serialization_dir;
+            std::string model_token;
+        } Caching;
+
+
         AccelerationPolicyManager();
         AccelerationPolicyManager(const std::string &config);
 
@@ -30,12 +38,16 @@ namespace aif
         bool setPolicy(Policy policy);
         Policy getPolicy();
 
+        void setCache(Caching cache);
+        Caching getCache();
+
         bool setCPUFallbackPercentage(int percentage);
         int getCPUFallbackPercentage();
 
     private:
         Policy stringToPolicy(const std::string &policy);
         Policy m_policy = kCPUOnly;
+        Caching m_cache = {false, "", ""};
         int m_cpuFallbackPercentage = 0;
     };
 } // end of namespace aif

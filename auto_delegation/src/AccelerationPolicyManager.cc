@@ -32,6 +32,19 @@ namespace aif
                 setCPUFallbackPercentage(cpuFallbackPercentage);
             }
         }
+        if (d.HasMember("serialization")) {
+            if (d["serialization"].HasMember("dir_path") && d["serialization"].HasMember("model_token")) {
+                Caching cache;
+
+                cache.useCache = true;
+                cache.serialization_dir = d["serialization"]["dir_path"].GetString();
+                cache.model_token = d["serialization"]["model_token"].GetString();
+                setCache(cache);
+            } else {
+                PmLogError(s_pmlogCtx, "APM", 0, "dir_path or model_token is invalid");
+            }
+        }
+
     }
 
     AccelerationPolicyManager::~AccelerationPolicyManager()
@@ -106,5 +119,15 @@ namespace aif
             policy = AccelerationPolicyManager::Policy::kPytorchModelGPU;
 
         return policy;
+    }
+
+    void AccelerationPolicyManager::setCache(AccelerationPolicyManager::Caching cache)
+    {
+        m_cache = cache;
+    }
+
+    AccelerationPolicyManager::Caching AccelerationPolicyManager::getCache()
+    {
+        return m_cache;
     }
 } // end of namespace aif
