@@ -32,7 +32,7 @@ namespace aif
                 setCPUFallbackPercentage(cpuFallbackPercentage);
             }
         }
-        if (d.HasMember("serialization")) {
+        if (!d.HasParseError() && d.HasMember("serialization")) {
             if (d["serialization"].HasMember("dir_path") && d["serialization"].HasMember("model_token")) {
                 Caching cache;
 
