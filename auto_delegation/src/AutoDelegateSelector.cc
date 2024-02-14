@@ -131,7 +131,13 @@ namespace aif
         {
             gpu_opts.cpu_fallback_percentage = apm.getCPUFallbackPercentage();
             gpu_opts.is_pytorch_converted_model = false;
+#ifdef USE_GPU_INFERENCE_PRIORITY_MIN_MEMORY_USAGE
+            PmLogInfo(s_pmlogCtx, "ADS", 0, "USE_GPU_INFERENCE_PRIORITY_MIN_MEMORY_USAGE ON");
             gpu_opts.inference_priority1 = TfLiteGpuInferencePriority::TFLITE_GPU_INFERENCE_PRIORITY_MIN_MEMORY_USAGE;
+#else
+            PmLogInfo(s_pmlogCtx, "ADS", 0, "USE_GPU_INFERENCE_PRIORITY_MIN_MEMORY_USAGE OFF");
+            gpu_opts.inference_priority1 = TfLiteGpuInferencePriority::TFLITE_GPU_INFERENCE_PRIORITY_MIN_LATENCY;
+#endif
             gpu_opts.inference_priority2 = TfLiteGpuInferencePriority::TFLITE_GPU_INFERENCE_PRIORITY_AUTO;
             gpu_opts.inference_priority3 = TfLiteGpuInferencePriority::TFLITE_GPU_INFERENCE_PRIORITY_AUTO;
         }
@@ -139,13 +145,20 @@ namespace aif
         {
             gpu_opts.cpu_fallback_percentage = apm.getCPUFallbackPercentage();
             gpu_opts.is_pytorch_converted_model = true;
+#ifdef USE_GPU_INFERENCE_PRIORITY_MIN_MEMORY_USAGE
+            PmLogInfo(s_pmlogCtx, "ADS", 0, "USE_GPU_INFERENCE_PRIORITY_MIN_MEMORY_USAGE ON");
             gpu_opts.inference_priority1 = TfLiteGpuInferencePriority::TFLITE_GPU_INFERENCE_PRIORITY_MIN_MEMORY_USAGE;
+#else
+            PmLogInfo(s_pmlogCtx, "ADS", 0, "USE_GPU_INFERENCE_PRIORITY_MIN_MEMORY_USAGE OFF");
+            gpu_opts.inference_priority1 = TfLiteGpuInferencePriority::TFLITE_GPU_INFERENCE_PRIORITY_MIN_LATENCY;
+#endif
             gpu_opts.inference_priority2 = TfLiteGpuInferencePriority::TFLITE_GPU_INFERENCE_PRIORITY_AUTO;
             gpu_opts.inference_priority3 = TfLiteGpuInferencePriority::TFLITE_GPU_INFERENCE_PRIORITY_AUTO;
         }
 
         auto cache = apm.getCache();
-        if (cache.useCache) {
+        if (cache.useCache)
+        {
             gpu_opts.experimental_flags |= TFLITE_GPU_EXPERIMENTAL_FLAGS_ENABLE_SERIALIZATION;
             gpu_opts.serialization_dir = cache.serialization_dir.c_str();
             gpu_opts.model_token = cache.model_token.c_str();
@@ -156,7 +169,6 @@ namespace aif
 #else
         gpu_opts.experimental_flags |= TFLITE_GPU_EXPERIMENTAL_FLAGS_CL_ONLY;
 #endif
-
 
         auto *delegate = TfLiteGpuDelegateV2Create(&gpu_opts);
         if (interpreter.ModifyGraphWithDelegate(delegate) != kTfLiteOk)
