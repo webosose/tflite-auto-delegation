@@ -13,6 +13,10 @@
 #include <tensorflow/lite/model.h>
 #include <tensorflow/lite/delegates/gpu/delegate.h>
 
+#ifdef GPU_DELEGATE_ONLY_CL
+#include "CL/cl.h"
+#endif
+
 #ifdef USE_EDGETPU
 #include <tensorflow/lite/delegates/external/external_delegate.h>
 #endif
@@ -33,6 +37,9 @@ namespace aif
         bool selectDelegate(tflite::Interpreter &interpreter, AccelerationPolicyManager &apm);
 
     private:
+#ifdef GPU_DELEGATE_ONLY_CL
+        bool isCLDeviceVendorIMG();
+#endif
 #ifdef USE_NPU
         bool setWebOSNPUDelegate(tflite::Interpreter &interpreter);
 #endif

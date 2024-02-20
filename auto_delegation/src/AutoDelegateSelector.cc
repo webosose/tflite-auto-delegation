@@ -84,6 +84,53 @@ namespace aif
             return true;
     }
 
+#ifdef GPU_DELEGATE_ONLY_CL
+    bool AutoDelegateSelector::isCLDeviceVendorIMG()
+    {
+        cl_uint platformCount;
+        clGetPlatformIDs(0, nullptr, &platformCount);
+
+        std::vector<cl_platform_id> platforms(platformCount);
+        clGetPlatformIDs(platformCount, platforms.data(), nullptr);
+
+        if (platformCount == 0)
+        {
+            PmLogWarning(s_pmlogCtx, "ADS", 0, "Warning: Expected exactly one OpenCL platform, but found no platform.");
+            return false;
+        }
+        else if (platformCount != 1)
+        {
+
+            PmLogWarning(s_pmlogCtx, "ADS", 0, "Warning: Expected exactly one OpenCL platform, but found %d platforms.", platformCount);
+        }
+
+        cl_uint deviceCount;
+        clGetDeviceIDs(platforms[0], CL_DEVICE_TYPE_ALL, 0, nullptr, &deviceCount);
+
+        std::vector<cl_device_id> devices(deviceCount);
+        clGetDeviceIDs(platforms[0], CL_DEVICE_TYPE_ALL, deviceCount, devices.data(), nullptr);
+
+        if (deviceCount == 0)
+        {
+            PmLogWarning(s_pmlogCtx, "ADS", 0, "Warning: Expected exactly one OpenCL device, but found no device.");
+            return false;
+        }
+        else if (deviceCount != 1)
+        {
+
+            PmLogWarning(s_pmlogCtx, "ADS", 0, "Warning: Expected exactly one OpenCL device, but found %d devices.", deviceCount);
+        }
+
+        char buffer[256];
+        clGetDeviceInfo(devices[0], CL_DEVICE_VENDOR, sizeof(buffer), buffer, nullptr);
+        PmLogInfo(s_pmlogCtx, "ADS", 0, "CL Device Vendor: %s", buffer);
+
+        const std::string img_vendor_name = "Imagination Technologies";
+
+        return std::string(buffer) == img_vendor_name ? true : false;
+    }
+#endif
+
 #ifdef USE_NPU
     bool AutoDelegateSelector::setWebOSNPUDelegate(tflite::Interpreter &interpreter)
     {
@@ -117,6 +164,10 @@ namespace aif
 
     bool AutoDelegateSelector::setTfLiteGPUDelegate(tflite::Interpreter &interpreter, AccelerationPolicyManager &apm)
     {
+        bool isIMG = false;
+#ifdef GPU_DELEGATE_ONLY_CL
+        isIMG = isCLDeviceVendorIMG();
+#endif
         auto policy = apm.getPolicy();
         TfLiteGpuDelegateOptionsV2 gpu_opts = TfLiteGpuDelegateOptionsV2Default();
         if (policy == AccelerationPolicyManager::kMinimumLatency)
@@ -131,13 +182,14 @@ namespace aif
         {
             gpu_opts.cpu_fallback_percentage = apm.getCPUFallbackPercentage();
             gpu_opts.is_pytorch_converted_model = false;
-#ifdef USE_GPU_INFERENCE_PRIORITY_MIN_MEMORY_USAGE
-            PmLogInfo(s_pmlogCtx, "ADS", 0, "USE_GPU_INFERENCE_PRIORITY_MIN_MEMORY_USAGE ON");
-            gpu_opts.inference_priority1 = TfLiteGpuInferencePriority::TFLITE_GPU_INFERENCE_PRIORITY_MIN_MEMORY_USAGE;
-#else
-            PmLogInfo(s_pmlogCtx, "ADS", 0, "USE_GPU_INFERENCE_PRIORITY_MIN_MEMORY_USAGE OFF");
-            gpu_opts.inference_priority1 = TfLiteGpuInferencePriority::TFLITE_GPU_INFERENCE_PRIORITY_MIN_LATENCY;
-#endif
+            if (isIMG)
+            {
+                gpu_opts.inference_priority1 = TfLiteGpuInferencePriority::TFLITE_GPU_INFERENCE_PRIORITY_MIN_LATENCY;
+            }
+            else
+            {
+                gpu_opts.inference_priority1 = TfLiteGpuInferencePriority::TFLITE_GPU_INFERENCE_PRIORITY_MIN_MEMORY_USAGE;
+            }
             gpu_opts.inference_priority2 = TfLiteGpuInferencePriority::TFLITE_GPU_INFERENCE_PRIORITY_AUTO;
             gpu_opts.inference_priority3 = TfLiteGpuInferencePriority::TFLITE_GPU_INFERENCE_PRIORITY_AUTO;
         }
@@ -145,13 +197,14 @@ namespace aif
         {
             gpu_opts.cpu_fallback_percentage = apm.getCPUFallbackPercentage();
             gpu_opts.is_pytorch_converted_model = true;
-#ifdef USE_GPU_INFERENCE_PRIORITY_MIN_MEMORY_USAGE
-            PmLogInfo(s_pmlogCtx, "ADS", 0, "USE_GPU_INFERENCE_PRIORITY_MIN_MEMORY_USAGE ON");
-            gpu_opts.inference_priority1 = TfLiteGpuInferencePriority::TFLITE_GPU_INFERENCE_PRIORITY_MIN_MEMORY_USAGE;
-#else
-            PmLogInfo(s_pmlogCtx, "ADS", 0, "USE_GPU_INFERENCE_PRIORITY_MIN_MEMORY_USAGE OFF");
-            gpu_opts.inference_priority1 = TfLiteGpuInferencePriority::TFLITE_GPU_INFERENCE_PRIORITY_MIN_LATENCY;
-#endif
+            if (isIMG)
+            {
+                gpu_opts.inference_priority1 = TfLiteGpuInferencePriority::TFLITE_GPU_INFERENCE_PRIORITY_MIN_LATENCY;
+            }
+            else
+            {
+                gpu_opts.inference_priority1 = TfLiteGpuInferencePriority::TFLITE_GPU_INFERENCE_PRIORITY_MIN_MEMORY_USAGE;
+            }
             gpu_opts.inference_priority2 = TfLiteGpuInferencePriority::TFLITE_GPU_INFERENCE_PRIORITY_AUTO;
             gpu_opts.inference_priority3 = TfLiteGpuInferencePriority::TFLITE_GPU_INFERENCE_PRIORITY_AUTO;
         }
@@ -166,7 +219,7 @@ namespace aif
 
 #ifdef GPU_DELEGATE_ONLY_GL
         gpu_opts.experimental_flags |= TFLITE_GPU_EXPERIMENTAL_FLAGS_GL_ONLY;
-#else
+#elif GPU_DELEGATE_ONLY_CL
         gpu_opts.experimental_flags |= TFLITE_GPU_EXPERIMENTAL_FLAGS_CL_ONLY;
 #endif
 
