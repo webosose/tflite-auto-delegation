@@ -54,6 +54,7 @@ TEST_F(AutoDelegateSelectorTest, 01_01_selectDelegate_fdshort_CPUOnly)
 }
 
 #ifndef USE_HOST_TEST
+#ifdef USE_GPU
 TEST_F(AutoDelegateSelectorTest, 01_02_selectDelegate_fdshort_MaximumPrecision)
 {
     std::string model_path = model_paths[0];
@@ -148,6 +149,7 @@ TEST_F(AutoDelegateSelectorTest, 01_05_selectDelegate_fdshort_EnableLoadBalancin
 
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
+#endif
 #endif
 
 #ifndef USE_HOST_TEST

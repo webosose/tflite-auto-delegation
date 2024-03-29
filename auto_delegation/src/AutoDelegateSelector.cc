@@ -77,91 +77,17 @@ namespace aif
 #endif
             }
         }
-
+#ifdef WITH_GPU
         if (apm.getPolicy() != AccelerationPolicyManager::kCPUOnly)
             return setTfLiteGPUDelegate(interpreter, apm);
         else
             return true;
-    }
-
-#ifdef GPU_DELEGATE_ONLY_CL
-    bool AutoDelegateSelector::isCLDeviceVendorIMG()
-    {
-        cl_uint platformCount;
-        clGetPlatformIDs(0, nullptr, &platformCount);
-
-        std::vector<cl_platform_id> platforms(platformCount);
-        clGetPlatformIDs(platformCount, platforms.data(), nullptr);
-
-        if (platformCount == 0)
-        {
-            PmLogWarning(s_pmlogCtx, "ADS", 0, "Warning: Expected exactly one OpenCL platform, but found no platform.");
-            return false;
-        }
-        else if (platformCount != 1)
-        {
-
-            PmLogWarning(s_pmlogCtx, "ADS", 0, "Warning: Expected exactly one OpenCL platform, but found %d platforms.", platformCount);
-        }
-
-        cl_uint deviceCount;
-        clGetDeviceIDs(platforms[0], CL_DEVICE_TYPE_ALL, 0, nullptr, &deviceCount);
-
-        std::vector<cl_device_id> devices(deviceCount);
-        clGetDeviceIDs(platforms[0], CL_DEVICE_TYPE_ALL, deviceCount, devices.data(), nullptr);
-
-        if (deviceCount == 0)
-        {
-            PmLogWarning(s_pmlogCtx, "ADS", 0, "Warning: Expected exactly one OpenCL device, but found no device.");
-            return false;
-        }
-        else if (deviceCount != 1)
-        {
-
-            PmLogWarning(s_pmlogCtx, "ADS", 0, "Warning: Expected exactly one OpenCL device, but found %d devices.", deviceCount);
-        }
-
-        char buffer[256];
-        clGetDeviceInfo(devices[0], CL_DEVICE_VENDOR, sizeof(buffer), buffer, nullptr);
-        PmLogInfo(s_pmlogCtx, "ADS", 0, "CL Device Vendor: %s", buffer);
-
-        const std::string img_vendor_name = "Imagination Technologies";
-
-        return std::string(buffer) == img_vendor_name ? true : false;
-    }
-#endif
-
-#ifdef USE_NPU
-    bool AutoDelegateSelector::setWebOSNPUDelegate(tflite::Interpreter &interpreter)
-    {
-        webos::npu::tflite::NpuDelegateOptions npu_opts = webos::npu::tflite::NpuDelegateOptions();
-        auto delegatePtr = tflite::Interpreter::TfLiteDelegatePtr(
-            webos::npu::tflite::TfLiteNpuDelegateCreate(npu_opts),
-            webos::npu::tflite::TfLiteNpuDelegateDelete);
-        if (interpreter.ModifyGraphWithDelegate(std::move(delegatePtr)) != kTfLiteOk)
-        {
-            PmLogError(s_pmlogCtx, "ADS", 0, "Something went wrong while setting webOS NPU delegate");
-            return false;
-        }
+#else
         return true;
-    }
 #endif
-
-#ifdef USE_EDGETPU
-    bool AutoDelegateSelector::setEdgeTPUDelegate(tflite::Interpreter &interpreter)
-    {
-        auto delegate_options = TfLiteExternalDelegateOptionsDefault(EDGETPU_LIB_PATH.c_str());
-
-        auto external_delegate = TfLiteExternalDelegateCreate(&delegate_options);
-        if (interpreter.ModifyGraphWithDelegate(external_delegate) != kTfLiteOk)
-        {
-            PmLogError(s_pmlogCtx, "ADS", 0, "Something went wrong while setting TPU delegate");
-            return false;
-        }
-        return true;
     }
-#endif
 
+#ifdef WITH_GPU
     bool AutoDelegateSelector::setTfLiteGPUDelegate(tflite::Interpreter &interpreter, AccelerationPolicyManager &apm)
     {
         bool isIMG = false;
@@ -232,5 +158,84 @@ namespace aif
 
         return true;
     }
+
+    #ifdef GPU_DELEGATE_ONLY_CL
+    bool AutoDelegateSelector::isCLDeviceVendorIMG()
+    {
+        cl_uint platformCount;
+        clGetPlatformIDs(0, nullptr, &platformCount);
+
+        std::vector<cl_platform_id> platforms(platformCount);
+        clGetPlatformIDs(platformCount, platforms.data(), nullptr);
+
+        if (platformCount == 0)
+        {
+            PmLogWarning(s_pmlogCtx, "ADS", 0, "Warning: Expected exactly one OpenCL platform, but found no platform.");
+            return false;
+        }
+        else if (platformCount != 1)
+        {
+
+            PmLogWarning(s_pmlogCtx, "ADS", 0, "Warning: Expected exactly one OpenCL platform, but found %d platforms.", platformCount);
+        }
+
+        cl_uint deviceCount;
+        clGetDeviceIDs(platforms[0], CL_DEVICE_TYPE_ALL, 0, nullptr, &deviceCount);
+
+        std::vector<cl_device_id> devices(deviceCount);
+        clGetDeviceIDs(platforms[0], CL_DEVICE_TYPE_ALL, deviceCount, devices.data(), nullptr);
+
+        if (deviceCount == 0)
+        {
+            PmLogWarning(s_pmlogCtx, "ADS", 0, "Warning: Expected exactly one OpenCL device, but found no device.");
+            return false;
+        }
+        else if (deviceCount != 1)
+        {
+
+            PmLogWarning(s_pmlogCtx, "ADS", 0, "Warning: Expected exactly one OpenCL device, but found %d devices.", deviceCount);
+        }
+
+        char buffer[256];
+        clGetDeviceInfo(devices[0], CL_DEVICE_VENDOR, sizeof(buffer), buffer, nullptr);
+        PmLogInfo(s_pmlogCtx, "ADS", 0, "CL Device Vendor: %s", buffer);
+
+        const std::string img_vendor_name = "Imagination Technologies";
+
+        return std::string(buffer) == img_vendor_name ? true : false;
+    }
+#endif
+#endif
+
+#ifdef USE_NPU
+    bool AutoDelegateSelector::setWebOSNPUDelegate(tflite::Interpreter &interpreter)
+    {
+        webos::npu::tflite::NpuDelegateOptions npu_opts = webos::npu::tflite::NpuDelegateOptions();
+        auto delegatePtr = tflite::Interpreter::TfLiteDelegatePtr(
+            webos::npu::tflite::TfLiteNpuDelegateCreate(npu_opts),
+            webos::npu::tflite::TfLiteNpuDelegateDelete);
+        if (interpreter.ModifyGraphWithDelegate(std::move(delegatePtr)) != kTfLiteOk)
+        {
+            PmLogError(s_pmlogCtx, "ADS", 0, "Something went wrong while setting webOS NPU delegate");
+            return false;
+        }
+        return true;
+    }
+#endif
+
+#ifdef USE_EDGETPU
+    bool AutoDelegateSelector::setEdgeTPUDelegate(tflite::Interpreter &interpreter)
+    {
+        auto delegate_options = TfLiteExternalDelegateOptionsDefault(EDGETPU_LIB_PATH.c_str());
+
+        auto external_delegate = TfLiteExternalDelegateCreate(&delegate_options);
+        if (interpreter.ModifyGraphWithDelegate(external_delegate) != kTfLiteOk)
+        {
+            PmLogError(s_pmlogCtx, "ADS", 0, "Something went wrong while setting TPU delegate");
+            return false;
+        }
+        return true;
+    }
+#endif
 
 } // end of namespace aif

@@ -70,6 +70,7 @@ TEST_F(AccelerationPolicyManagerTest, 02_04_set_and_get_CPU_ONLY_policy_empty_st
     EXPECT_EQ(apm.getPolicy(), APM::kCPUOnly);
 }
 
+#ifdef USE_GPU
 TEST_F(AccelerationPolicyManagerTest, 03_01_set_and_get_MAX_PRECISION_policy)
 {
     std::string config(
@@ -154,3 +155,4 @@ TEST_F(AccelerationPolicyManagerTest, 07_set_and_get_GPU_Caching)
     EXPECT_EQ(apm.getCache().model_token, "pose2d_gpu_mid");
     EXPECT_EQ(apm.getPolicy(), APM::kEnableLoadBalancing);
 }
+#endif
