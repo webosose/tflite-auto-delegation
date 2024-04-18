@@ -163,10 +163,18 @@ namespace aif
     bool AutoDelegateSelector::isCLDeviceVendorIMG()
     {
         cl_uint platformCount;
-        clGetPlatformIDs(0, nullptr, &platformCount);
+        if (clGetPlatformIDs(0, nullptr, &platformCount) != CL_SUCCESS)
+        {
+            PmLogError(s_pmlogCtx, "ADS", 0, "Error: clGetPlatformIDs failed.");
+            return false;
+        }
 
         std::vector<cl_platform_id> platforms(platformCount);
-        clGetPlatformIDs(platformCount, platforms.data(), nullptr);
+        if (clGetPlatformIDs(platformCount, platforms.data(), nullptr) != CL_SUCCESS)
+        {
+            PmLogError(s_pmlogCtx, "ADS", 0, "Error: clGetPlatformIDs failed.");
+            return false;
+        }
 
         if (platformCount == 0)
         {
@@ -197,7 +205,11 @@ namespace aif
         }
 
         char buffer[256];
-        clGetDeviceInfo(devices[0], CL_DEVICE_VENDOR, sizeof(buffer), buffer, nullptr);
+        if (clGetDeviceInfo(devices[0], CL_DEVICE_VENDOR, sizeof(buffer), buffer, nullptr) != CL_SUCCESS)
+        {
+            PmLogError(s_pmlogCtx, "ADS", 0, "Error: clGetDeviceInfo failed.");
+            return false;
+        }
         PmLogInfo(s_pmlogCtx, "ADS", 0, "CL Device Vendor: %s", buffer);
 
         const std::string img_vendor_name = "Imagination Technologies";
