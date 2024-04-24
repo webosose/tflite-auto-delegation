@@ -64,6 +64,7 @@ TEST_F(GraphTesterTest, 01_graphTester_fdshort_CpuOnly)
 }
 
 #ifndef USE_HOST_TEST
+#ifdef USE_GPU
 TEST_F(GraphTesterTest, 02_graphTester_fdshort)
 {
     std::string model_path = model_paths[0];
@@ -98,4 +99,5 @@ TEST_F(GraphTesterTest, 02_graphTester_fdshort)
 
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
+#endif
 #endif

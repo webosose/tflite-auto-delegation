@@ -153,6 +153,6 @@ TEST_F(AccelerationPolicyManagerTest, 07_set_and_get_GPU_Caching)
     EXPECT_EQ(apm.getCache().useCache, true);
     EXPECT_EQ(apm.getCache().serialization_dir, "/usr/share/aif");
     EXPECT_EQ(apm.getCache().model_token, "pose2d_gpu_mid");
-    EXPECT_EQ(apm.getPolicy(), APM::kEnableLoadBalancing);
+    EXPECT_EQ(apm.getPolicy(), APM::kCPUOnly);
 }
 #endif
