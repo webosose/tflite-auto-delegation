@@ -76,7 +76,7 @@ namespace aif
 #endif
             }
         }
-#ifdef WITH_GPU
+#ifdef USE_GPU
         if (apm.getPolicy() != AccelerationPolicyManager::kCPUOnly)
             return setTfLiteGPUDelegate(interpreter, apm);
         else
@@ -86,7 +86,7 @@ namespace aif
 #endif
     }
 
-#ifdef WITH_GPU
+#ifdef USE_GPU
     bool AutoDelegateSelector::setTfLiteGPUDelegate(tflite::Interpreter &interpreter, AccelerationPolicyManager &apm)
     {
         bool isIMG = false;
