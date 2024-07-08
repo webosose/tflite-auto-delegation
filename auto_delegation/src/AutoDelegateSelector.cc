@@ -148,8 +148,13 @@ namespace aif
         gpu_opts.experimental_flags |= TFLITE_GPU_EXPERIMENTAL_FLAGS_CL_ONLY;
 #endif
 
-        auto *delegate = TfLiteGpuDelegateV2Create(&gpu_opts);
-        if (interpreter.ModifyGraphWithDelegate(delegate) != kTfLiteOk)
+        auto deleter = [](TfLiteDelegate* delegate) {
+                TfLiteGpuDelegateV2Delete(delegate);
+        };
+
+        TfLiteDelegate* raw_delegate = TfLiteGpuDelegateV2Create(&gpu_opts);
+        std::unique_ptr<TfLiteDelegate, decltype(deleter)> delegate(raw_delegate, deleter);
+        if (interpreter.ModifyGraphWithDelegate(std::move(delegate)) != kTfLiteOk)
         {
             PmLogError(s_pmlogCtx, "ADS", 0, "Something went wrong while setting TfLiteGPU delegate");
             return false;
@@ -158,7 +163,7 @@ namespace aif
         return true;
     }
 
-    #ifdef GPU_DELEGATE_ONLY_CL
+#ifdef GPU_DELEGATE_ONLY_CL
     bool AutoDelegateSelector::isCLDeviceVendorIMG()
     {
         cl_uint platformCount;
