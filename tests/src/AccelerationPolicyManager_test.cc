@@ -30,6 +30,7 @@ TEST_F(AccelerationPolicyManagerTest, 01_default)
 
     EXPECT_EQ(apm.getPolicy(), APM::kCPUOnly);
     EXPECT_EQ(apm.getCPUFallbackPercentage(), 0);
+    EXPECT_EQ(apm.getMinFreq(), 0);
 }
 
 TEST_F(AccelerationPolicyManagerTest, 02_01_set_and_get_CPU_ONLY_policy)
@@ -154,5 +155,45 @@ TEST_F(AccelerationPolicyManagerTest, 07_set_and_get_GPU_Caching)
     EXPECT_EQ(apm.getCache().serialization_dir, "/usr/share/aif");
     EXPECT_EQ(apm.getCache().model_token, "pose2d_gpu_mid");
     EXPECT_EQ(apm.getPolicy(), APM::kCPUOnly);
+}
+#endif
+
+#ifdef USE_NPU
+TEST_F(AccelerationPolicyManagerTest, 08_1_set_and_get_min_freq)
+{
+    APM apm;
+
+    EXPECT_FALSE(apm.setMinFreq(0));
+    EXPECT_EQ(apm.getMinFreq(), 0);
+
+    EXPECT_FALSE(apm.setMinFreq(-100));
+    EXPECT_EQ(apm.getMinFreq(), 0);
+
+    EXPECT_TRUE(apm.setMinFreq(30));
+    EXPECT_EQ(apm.getMinFreq(), 30);
+}
+
+TEST_F(AccelerationPolicyManagerTest, 08_2_set_and_get_min_freq)
+{
+    std::string config(
+        "{\n"
+        "    \"min_freq\" : 30\n"
+        "}");
+    APM apm(config);
+
+    EXPECT_EQ(apm.getMinFreq(), 30);
+}
+
+TEST_F(AccelerationPolicyManagerTest, 08_3_set_and_get_min_freq)
+{
+    std::string config(
+        "{\n"
+        "    \"policy\" : \"MIN_LATENCY\",\n"
+        "    \"min_freq\" : 15\n"
+        "}");
+    APM apm(config);
+
+    EXPECT_EQ(apm.getPolicy(), APM::kMinimumLatency);
+    EXPECT_EQ(apm.getMinFreq(), 15);
 }
 #endif

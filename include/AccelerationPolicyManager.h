@@ -44,11 +44,15 @@ namespace aif
         bool setCPUFallbackPercentage(int percentage);
         int getCPUFallbackPercentage();
 
+        bool setMinFreq(int freq);
+        int getMinFreq();
+
     private:
         Policy stringToPolicy(const std::string &policy);
         Policy m_policy = kCPUOnly;
         Caching m_cache = {false, "", ""};
         int m_cpuFallbackPercentage = 0;
+        int m_minFreq = 0;
     };
 } // end of namespace aif
 
