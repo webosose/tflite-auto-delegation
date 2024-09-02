@@ -48,7 +48,7 @@ namespace aif
 #endif
 #endif
 #ifdef USE_NPU
-        bool setWebOSNPUDelegate(tflite::Interpreter &interpreter, AccelerationPolicyManager &apm);
+        bool setWebOSNPUDelegate(tflite::Interpreter &interpreter);
 #endif
 #ifdef USE_EDGETPU
         bool setEdgeTPUDelegate(tflite::Interpreter &interpreter);

@@ -48,11 +48,6 @@ namespace aif
                 PmLogError(s_pmlogCtx, "APM", 0, "dir_path or model_token is invalid");
             }
         }
-        if (!d.HasParseError() && d.HasMember("min_freq"))
-        {
-            int minFreq = d["min_freq"].GetInt();
-            setMinFreq(minFreq);
-        }
     }
 
     AccelerationPolicyManager::~AccelerationPolicyManager()
@@ -137,25 +132,5 @@ namespace aif
     AccelerationPolicyManager::Caching AccelerationPolicyManager::getCache()
     {
         return m_cache;
-    }
-
-    bool AccelerationPolicyManager::setMinFreq(int freq)
-    {
-        if (freq <= 0)
-        {
-            PmLogError(s_pmlogCtx, "APM", 0, "Invalid Min Frequency: %d", freq);
-            return false;
-        }
-
-        m_minFreq = freq;
-
-        PmLogInfo(s_pmlogCtx, "APM", 0, "Set Min Frequency: %d", m_minFreq);
-
-        return true;
-    }
-
-    int AccelerationPolicyManager::getMinFreq()
-    {
-        return m_minFreq;
     }
 } // end of namespace aif

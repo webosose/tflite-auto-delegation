@@ -49,7 +49,7 @@ namespace aif
                 // check if the model is NPU compiled
                 if (strcmp(registration.custom_name, "lgnpu_custom_op") == 0)
                 {
-                    if (setWebOSNPUDelegate(interpreter, apm) == true)
+                    if (setWebOSNPUDelegate(interpreter) == true)
                     {
                         break;
                     }
@@ -224,28 +224,11 @@ namespace aif
 #endif
 
 #ifdef USE_NPU
-    bool AutoDelegateSelector::setWebOSNPUDelegate(tflite::Interpreter &interpreter, AccelerationPolicyManager &apm)
+    bool AutoDelegateSelector::setWebOSNPUDelegate(tflite::Interpreter &interpreter)
     {
-        int min_freq = apm.getMinFreq();
-        std::unique_ptr<webos::npu::tflite::NpuDelegateOptions> npu_opts;
-
-        if (min_freq > 0) {
-            int num_options = 1;
-            std::unique_ptr<const char*> keys = std::unique_ptr<const char*>(new const char*[num_options + 1]);
-            std::unique_ptr<const char*> values = std::unique_ptr<const char*>(new const char*[num_options + 1]);
-
-            keys.get()[0] = "min_freq";
-            std::string min_freq_str = std::to_string(min_freq);
-            values.get()[0] = min_freq_str.c_str();
-
-            npu_opts = std::make_unique<webos::npu::tflite::NpuDelegateOptions>(keys.get(), values.get(), num_options, nullptr);
-        }
-        else {
-            npu_opts = std::make_unique<webos::npu::tflite::NpuDelegateOptions>();
-        }
-
+        webos::npu::tflite::NpuDelegateOptions npu_opts = webos::npu::tflite::NpuDelegateOptions();
         auto delegatePtr = tflite::Interpreter::TfLiteDelegatePtr(
-            webos::npu::tflite::TfLiteNpuDelegateCreate(*npu_opts),
+            webos::npu::tflite::TfLiteNpuDelegateCreate(npu_opts),
             webos::npu::tflite::TfLiteNpuDelegateDelete);
         if (interpreter.ModifyGraphWithDelegate(std::move(delegatePtr)) != kTfLiteOk)
         {

@@ -228,34 +228,5 @@ TEST_F(AutoDelegateSelectorTest, 03_01_webosnpu_test)
 
     interpreter.reset();
 }
-
-TEST_F(AutoDelegateSelectorTest, 03_02_webosnpu_test)
-{
-    std::string model_path = model_paths[2];
-    std::unique_ptr<tflite::FlatBufferModel> model = tflite::FlatBufferModel::BuildFromFile(model_path.c_str());
-    std::unique_ptr<tflite::Interpreter> interpreter;
-    tflite::ops::builtin::BuiltinOpResolver resolver;
-
-    EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
-
-    std::string config(
-        "{\n"
-        "    \"min_freq\" : 30\n"
-        "}");
-    APM apm(config);
-    EXPECT_EQ(apm.getMinFreq(), 30);
-
-    ADS ads;
-    EXPECT_TRUE(ads.selectDelegate(*interpreter.get(), apm));
-
-    EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
-
-    GraphTester graphTester(*interpreter.get());
-    EXPECT_TRUE(graphTester.fillRandomInputTensor());
-
-    EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
-
-    interpreter.reset();
-}
 #endif
 #endif
