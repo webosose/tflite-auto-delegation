@@ -29,6 +29,10 @@
 #include <aif/npu/npu_delegate.h>
 #endif
 
+#ifdef USE_NNAPI
+#include <tensorflow/lite/delegates/nnapi/nnapi_delegate.h>
+#endif
+
 #include "AccelerationPolicyManager.h"
 
 namespace aif
@@ -49,6 +53,9 @@ namespace aif
 #endif
 #ifdef USE_NPU
         bool setWebOSNPUDelegate(tflite::Interpreter &interpreter);
+#endif
+#ifdef USE_NNAPI
+        bool setNNAPIDelegate(tflite::Interpreter &interpreter, AccelerationPolicyManager &apm);
 #endif
 #ifdef USE_EDGETPU
         bool setEdgeTPUDelegate(tflite::Interpreter &interpreter);

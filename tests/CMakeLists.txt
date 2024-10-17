@@ -12,6 +12,7 @@ ENDIF()
 OPTION(WITH_GPU "Enable GPU Support" OFF)
 OPTION(WITH_EDGETPU "Enable Google Coral EdgeTPU Support" OFF)
 OPTION(WITH_NPU "Enable webOS NPU Support" OFF)
+OPTION(WITH_NNAPI "Enable webOS NNAPI Support" OFF)
 
 # find needed packages
 find_package(PkgConfig)
@@ -47,6 +48,10 @@ ENDIF(WITH_EDGETPU)
 IF(WITH_NPU)
     ADD_DEFINITIONS(-DUSE_NPU)
 ENDIF(WITH_NPU)
+
+IF(WITH_NNAPI)
+    ADD_DEFINITIONS(-DUSE_NNAPI)
+ENDIF(WITH_NNAPI)
 
 add_definitions(
     -std=c++14

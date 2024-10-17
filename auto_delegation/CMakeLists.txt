@@ -17,6 +17,7 @@ OPTION(WITH_EDGETPU "Enable Google Coral EdgeTPU Support" OFF)
 OPTION(WITH_NPU "Enable webOS NPU Support" OFF)
 OPTION(TFLITE_ENABLE_GPU_GL_ONLY "Enable Only GL Backend" OFF)
 OPTION(TFLITE_ENABLE_GPU_CL_ONLY "Enable Only CL Backend" OFF)
+OPTION(WITH_NNAPI "Enable webOS NNAPI Support" OFF)
 
 # find needed packages
 include(FindPkgConfig)
@@ -64,6 +65,10 @@ IF(WITH_NPU)
     LINK_DIRECTORIES(${NPU-DELEGATE_LIBRARY_DIRS})
     ADD_DEFINITIONS(-DUSE_NPU)
 ENDIF(WITH_NPU)
+
+IF(WITH_NNAPI)
+    ADD_DEFINITIONS(-DUSE_NNAPI)
+ENDIF(WITH_NNAPI)
 
 set(LIB_NAME auto-delegation)
 set(INC_DIR ${CMAKE_SOURCE_DIR}/include)

@@ -156,3 +156,59 @@ TEST_F(AccelerationPolicyManagerTest, 07_set_and_get_GPU_Caching)
     EXPECT_EQ(apm.getPolicy(), APM::kCPUOnly);
 }
 #endif
+
+#ifdef USE_NNAPI
+TEST_F(AccelerationPolicyManagerTest, 08_01_set_and_get_MIN_RES_policy)
+{
+    std::string config(
+        "{\n"
+        "    \"policy\" : \"MIN_RES\"\n"
+        "}");
+    APM apm(config);
+
+    EXPECT_EQ(apm.getPolicy(), APM::kMinRes);
+}
+
+TEST_F(AccelerationPolicyManagerTest, 08_02_set_and_get_MIN_LATENCY_MIN_RES_policy)
+{
+    std::string config(
+        "{\n"
+        "    \"policy\" : \"MIN_LATENCY_MIN_RES\"\n"
+        "}");
+    APM apm(config);
+
+    EXPECT_EQ(apm.getPolicy(), APM::kMinLatencyMinRes);
+}
+
+TEST_F(AccelerationPolicyManagerTest, 08_03_set_and_get_MIN_RES_policy)
+{
+    APM apm;
+
+    EXPECT_TRUE(apm.setPolicy(APM::kMinRes));
+    EXPECT_EQ(apm.getPolicy(), APM::kMinRes);
+}
+
+TEST_F(AccelerationPolicyManagerTest, 08_04_set_and_get_MIN_LATENCY_MIN_RES_policy)
+{
+    APM apm;
+
+    EXPECT_TRUE(apm.setPolicy(APM::kMinLatencyMinRes));
+    EXPECT_EQ(apm.getPolicy(), APM::kMinLatencyMinRes);
+}
+
+TEST_F(AccelerationPolicyManagerTest, 09_set_and_get_NNAPI_Caching)
+{
+    std::string config = R"(
+        {
+            "caching" : {
+                "cache_dir" : "/usr/share/aif/model_caches/",
+                "model_token" : "yolov3_qat_soc_model"
+            }
+        }
+    )";
+
+    APM apm(config);
+    EXPECT_EQ(apm.getNnapiCache().cache_dir, "/usr/share/aif/model_caches/");
+    EXPECT_EQ(apm.getNnapiCache().model_token, "yolov3_qat_soc_model");
+}
+#endif

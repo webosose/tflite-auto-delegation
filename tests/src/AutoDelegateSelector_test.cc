@@ -28,7 +28,13 @@ protected:
     std::vector<std::string> model_paths{
         std::string(AIF_INSTALL_DIR) + std::string("/model/face_detection_short_range.tflite"),
         std::string(AIF_INSTALL_DIR) + std::string("/model/face-detector-quantized_edgetpu.tflite"),
-        std::string(AIF_INSTALL_DIR) + std::string("/model/FitTV_Pose2D.tflite")};
+        std::string(AIF_INSTALL_DIR) + std::string("/model/FitTV_Pose2D.tflite")
+#ifndef USE_HOST_TEST
+#ifdef USE_NNAPI
+        ,std::string(AIF_INSTALL_DIR) + std::string("/model/FitTV_Detector_Yolov3_QAT_SoC.tflite")
+#endif
+#endif
+    };
 };
 
 TEST_F(AutoDelegateSelectorTest, 01_01_selectDelegate_fdshort_CPUOnly)
@@ -227,6 +233,76 @@ TEST_F(AutoDelegateSelectorTest, 03_01_webosnpu_test)
     EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 
     interpreter.reset();
+}
+#endif
+#endif
+
+#ifndef USE_HOST_TEST
+#ifdef USE_NNAPI
+TEST_F(AutoDelegateSelectorTest, 05_01_selectDelegate_yoloqat_MinRes_test)
+{
+    std::string model_path = model_paths[3];
+    std::unique_ptr<tflite::FlatBufferModel> model = tflite::FlatBufferModel::BuildFromFile(model_path.c_str());
+    std::unique_ptr<tflite::Interpreter> interpreter;
+    tflite::ops::builtin::BuiltinOpResolver resolver;
+
+    EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
+
+    std::string config= R"(
+        {
+            "policy" : "MIN_RES",
+            "caching" : {
+                "cache_dir" : "/usr/share/aif/model_caches/",
+                "model_token" : "yolov3_qat_soc_model"
+            }
+        }
+    )";
+    APM apm(config);
+    EXPECT_EQ(apm.getNnapiCache().cache_dir, "/usr/share/aif/model_caches/");
+    EXPECT_EQ(apm.getNnapiCache().model_token, "yolov3_qat_soc_model");
+    EXPECT_EQ(apm.getPolicy(), APM::kMinRes);
+    ADS ads;
+    EXPECT_TRUE(ads.selectDelegate(*interpreter.get(), apm));
+
+    EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
+
+    GraphTester graphTester(*interpreter.get());
+    EXPECT_TRUE(graphTester.fillRandomInputTensor());
+
+    EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
+}
+
+TEST_F(AutoDelegateSelectorTest, 05_02_selectDelegate_yoloqat_MinLatencyMinRes_test)
+{
+    std::string model_path = model_paths[3];
+    std::unique_ptr<tflite::FlatBufferModel> model = tflite::FlatBufferModel::BuildFromFile(model_path.c_str());
+    std::unique_ptr<tflite::Interpreter> interpreter;
+    tflite::ops::builtin::BuiltinOpResolver resolver;
+
+    EXPECT_EQ(tflite::InterpreterBuilder(*model.get(), resolver)(&interpreter), kTfLiteOk);
+
+    std::string config= R"(
+        {
+            "policy" : "MIN_LATENCY_MIN_RES",
+            "caching" : {
+                "cache_dir" : "/usr/share/aif/model_caches/",
+                "model_token" : "yolov3_qat_soc_model"
+            }
+        }
+    )";
+    APM apm(config);
+    EXPECT_EQ(apm.getNnapiCache().cache_dir, "/usr/share/aif/model_caches/");
+    EXPECT_EQ(apm.getNnapiCache().model_token, "yolov3_qat_soc_model");
+    EXPECT_EQ(apm.getPolicy(), APM::kMinLatencyMinRes);
+    ADS ads;
+    EXPECT_TRUE(ads.selectDelegate(*interpreter.get(), apm));
+
+    EXPECT_EQ(interpreter->AllocateTensors(), kTfLiteOk);
+
+    GraphTester graphTester(*interpreter.get());
+    EXPECT_TRUE(graphTester.fillRandomInputTensor());
+
+    EXPECT_EQ(interpreter->Invoke(), kTfLiteOk);
 }
 #endif
 #endif

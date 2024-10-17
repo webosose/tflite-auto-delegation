@@ -18,7 +18,6 @@ namespace aif
 
     bool AutoDelegateSelector::selectDelegate(tflite::Interpreter &interpreter, AccelerationPolicyManager &apm)
     {
-
         if (apm.getCPUFallbackPercentage() != 0)
         {
             if (apm.getPolicy() != AccelerationPolicyManager::kEnableLoadBalancing &&
@@ -76,15 +75,24 @@ namespace aif
 #endif
             }
         }
+#ifdef USE_NNAPI
+        if (apm.getPolicy() == AccelerationPolicyManager::kMinRes) {
+            return setNNAPIDelegate(interpreter, apm);
+        }
+        else if(apm.getPolicy() == AccelerationPolicyManager::kMinLatencyMinRes) {
+            if (!setNNAPIDelegate(interpreter, apm)) {
+                PmLogError(s_pmlogCtx, "ADS", 0, "Fail to get Policy while using NNAPI");
+                return false;
+            }
+        }
+#endif
 #ifdef USE_GPU
         if (apm.getPolicy() != AccelerationPolicyManager::kCPUOnly)
             return setTfLiteGPUDelegate(interpreter, apm);
-        else
-            return true;
-#else
-        return true;
 #endif
+        return true;
     }
+
 
 #ifdef USE_GPU
     bool AutoDelegateSelector::setTfLiteGPUDelegate(tflite::Interpreter &interpreter, AccelerationPolicyManager &apm)
@@ -95,7 +103,7 @@ namespace aif
 #endif
         auto policy = apm.getPolicy();
         TfLiteGpuDelegateOptionsV2 gpu_opts = TfLiteGpuDelegateOptionsV2Default();
-        if (policy == AccelerationPolicyManager::kMinimumLatency)
+        if (policy & AccelerationPolicyManager::kMinimumLatency)
         {
             gpu_opts.cpu_fallback_percentage = 0;
             gpu_opts.is_pytorch_converted_model = false;
@@ -134,7 +142,7 @@ namespace aif
             gpu_opts.inference_priority3 = TfLiteGpuInferencePriority::TFLITE_GPU_INFERENCE_PRIORITY_AUTO;
         }
 
-        auto cache = apm.getCache();
+        const auto &cache = apm.getCache();
         if (cache.useCache)
         {
             gpu_opts.experimental_flags |= TFLITE_GPU_EXPERIMENTAL_FLAGS_ENABLE_SERIALIZATION;
@@ -233,6 +241,58 @@ namespace aif
         if (interpreter.ModifyGraphWithDelegate(std::move(delegatePtr)) != kTfLiteOk)
         {
             PmLogError(s_pmlogCtx, "ADS", 0, "Something went wrong while setting webOS NPU delegate");
+            return false;
+        }
+        return true;
+    }
+#endif
+
+#ifdef USE_NNAPI
+    bool AutoDelegateSelector::setNNAPIDelegate(tflite::Interpreter &interpreter, AccelerationPolicyManager &apm)
+    {
+        auto policy = apm.getPolicy();
+        tflite::StatefulNnApiDelegate::Options nnapi_opts = tflite::StatefulNnApiDelegate::Options();
+        const auto& cache = apm.getNnapiCache();
+
+        if(policy == AccelerationPolicyManager::kMinRes || policy == AccelerationPolicyManager::kMinLatencyMinRes) {
+            if (cache.cache_dir != "" && cache.model_token != "")
+            {
+                nnapi_opts.cache_dir   = cache.cache_dir.c_str();
+                nnapi_opts.model_token = cache.model_token.c_str();
+            }
+            else{
+                PmLogError(s_pmlogCtx, "ADS", 0, "cache_dir or model_token is invalid");
+            }
+            if (cache.disallow_nnapi_cpu)
+            {
+                nnapi_opts.disallow_nnapi_cpu = cache.disallow_nnapi_cpu;
+            }
+            else{
+                PmLogError(s_pmlogCtx, "ADS", 0, "disallow_nnapi_cpu is invalid");
+            }
+            if (cache.max_number_delegated_partitions != 0)
+            {
+                nnapi_opts.max_number_delegated_partitions = cache.max_number_delegated_partitions;
+            }
+            else{
+                PmLogError(s_pmlogCtx, "ADS", 0, "max_number_delegated_partitions is invalid");
+            }
+            if (cache.accelerator_name != "")
+            {
+                nnapi_opts.accelerator_name = cache.accelerator_name.c_str();
+            }
+            else{
+                PmLogError(s_pmlogCtx, "ADS", 0, "accelerator_name is invalid");
+            }
+        }
+
+        auto deleter = [](TfLiteDelegate* delegate) { delete delegate; };
+
+        TfLiteDelegate* nnapi_delegate = new tflite::StatefulNnApiDelegate(nnapi_opts);
+        std::unique_ptr<TfLiteDelegate, decltype(deleter)> delegatePtr(nnapi_delegate, deleter);
+        if (interpreter.ModifyGraphWithDelegate(std::move(delegatePtr)) != kTfLiteOk)
+        {
+            PmLogError(s_pmlogCtx, "ADS", 0, "Something went wrong while setting TfLite NNAPI delegate");
             return false;
         }
         return true;
