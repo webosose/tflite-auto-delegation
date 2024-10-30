@@ -17,12 +17,13 @@ namespace aif
         {
             kCPUOnly = 0x0,
             kMaximumPrecision = 0x1,
-            kMinimumLatency = 0x2,
-            kEnableLoadBalancing = 0x3,
-            kPytorchModelGPU = 0x4,
-            kMinRes = 0x5,
+            kEnableLoadBalancing = 0x2,
+            kPytorchModelGPU = 0x3,
+            kMinRes = 0x4,
 
-            kMinLatencyMinRes = (kMinimumLatency | 0x10),
+            kMinimumLatency = 0x10,
+
+            kMinLatencyMinRes = (kMinimumLatency | kMinRes), // 0x14
         };
 
         typedef struct Caching
